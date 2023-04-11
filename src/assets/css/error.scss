@@ -1,0 +1,32 @@
+// 404
+.notFound{
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background: #f5f5f5;
+    img{
+        width: 500px;
+    }
+    .text{
+        margin-top: -30px;
+        line-height: 1.2;
+        color: #424954;
+        h1{
+            font-size: 42px;
+            font-weight: bold;
+        }
+        h2{
+            font-size: 34px;
+        }
+        p{
+            font-size: 24px;
+        }
+    }
+    a{
+        margin-top: 50px;
+        display: inline-block;
+    }
+}
