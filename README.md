@@ -10,7 +10,7 @@ vue2 后台管理系统模板
 - 支持模块化开发
 - 自动发现并注册路由、`store`；
 - 自动注册组件；
-  .env.development.local 覆盖 env
+- .env.development.local 覆盖 env
 
 ### 安装依赖 node: '>=12.0.0'
 
