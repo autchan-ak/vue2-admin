@@ -1,44 +1,40 @@
-import Request from '@/request/request.js'
+import Request from '@/request'
 import { BASE64Helper } from '@/utils/CryptUtil.js'
 import { getToken, setToken, removeToken, saveUserInfo, loadUserinfo } from '@/utils/ProjectTools.js'
 
 
 // 默认加载本地用户信息
-const userInfo = loadUserinfo();
-// 重置用户令牌和角色信息
 const state = {
-    userInfo,
+    userInfo: loadUserinfo(),
     token: getToken(),
     valid: false, // 当前路由是否有效
-    roles: userInfo.roles, //角色
-    menus: userInfo.menus
+    roles: {}, //角色
 }
 
 
 
 const mutations = {
     SAVE_AUTHEN_INFO: (state, data) => {
-        saveUserInfo(data)
+        setToken(data.token)
+        saveUserInfo(data.userInfo)
         state.token = data.token;
-        state.roles = data.userInfo.roles;
-        state.menus = data.userInfo.menus;
-        state.valid = false;
+        state.userInfo = data.userInfo
     },
     LOGOUT(state) {
+        removeToken();
         state.userInfo = {};
         state.token = '';
         state.roles = [];
-        state.menus = [];
         state.valid = false;
     },
     SET_VALID: (state) => {
         state.valid = true;
     },
-    USER_INFO: (state, data) => {
-        data.menus = state.menus;
-        data.roles = state.roles;
-        saveUserInfo(data)
-        state.userInfo = JSON.parse(JSON.stringify(data))
+    USER_ROLES: (state, data) => {
+        state.roles = data;
+    },
+    SET_VALID: (state) => {
+        state.valid = true;
     }
 };
 
@@ -51,18 +47,31 @@ const actions = {
                 url: '/user/login',
                 method: 'post',
                 data: { username: username.trim(), password: BASE64Helper.encode(password) }
-            }).then(res => {
-                setToken(res.data.token)
+            }).then(async res => {
                 // 保存状态
                 commit('SAVE_AUTHEN_INFO', res.data);
-                commit("USER_INFO", res.data.userInfo);
-                resolve(res)
+                let menus = await dispatch('getUserRoles', res.data.userInfo.roleId)
+                resolve({ userInfo: res.data.userInfo, menus })
             }).catch(error => {
                 reject(error)
             })
         })
     },
-    // 保存用户信息
+    // 获取用户角色
+    getUserRoles({ commit }, id) {
+        return new Promise((resolve, reject) => {
+            Request({
+                url: '/user/roles',
+                method: 'post',
+                data: id,
+            }).then(res => {
+                commit("USER_ROLES", res.data);
+                resolve(res.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
 
     // 重置令牌
     resetToken({ commit, dispatch }) {
@@ -72,7 +81,6 @@ const actions = {
                 url: '/user/logout',
                 method: 'post',
             }).then(res => {
-                removeToken();
                 commit('LOGOUT')
                 resolve(res)
             }).catch(error => {
@@ -92,7 +100,6 @@ const actions = {
                 url: '/user/userInfo',
                 method: 'get',
             }).then(res => {
-                commit("USER_INFO", res.data);
                 resolve(res.data)
             }).catch(error => {
                 reject(error)

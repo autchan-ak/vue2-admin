@@ -2,7 +2,7 @@
   <div class="app-wrapper">
     <el-container class="app-box">
       <el-aside
-        :width="showSidebar ? '200px' : '50px'"
+        :width="showSidebar ? '200px' : '60px'"
         class="main-aside"
         :style="themeColor[themeIndex].aside"
       >

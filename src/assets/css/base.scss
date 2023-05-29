@@ -1,0 +1,26 @@
+// 优化显示
+body {
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+
+    #app {
+        overflow: hidden;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    #nprogress .bar {
+        background: #f811b2 !important; //自定义颜色
+    }
+
+    // 变灰
+    .grayMode {
+        -webkit-filter: grayscale(100%);
+        -moz-filter: grayscale(100%);
+        -ms-filter: grayscale(100%);
+        -o-filter: grayscale(100%);
+        filter: grayscale(100%);
+        filter: gray;
+    }
+}

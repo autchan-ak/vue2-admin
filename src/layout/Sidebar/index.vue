@@ -15,11 +15,11 @@
         mode="vertical"
       >
         <SidebarItem
-          v-for="route in addRoutes"
-          :key="route.path"
+          v-for="(route,index) in routes"
+          :key="index"
           :item="route"
           :base-path="route.path"
-        ></SidebarItem>
+        />
       </el-menu>
     </div>
   </div>
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapState("theme", ["showSidebar"]),
-    ...mapState("permission", ["addRoutes"]),
+    ...mapState("permission", ["routes"]),
     activeMenu() {
       const route = this.$route;
       const { meta, path } = route;

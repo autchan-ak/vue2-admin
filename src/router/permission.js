@@ -23,6 +23,14 @@ router.beforeEach(async (to, from, next) => {
     if (document.getElementsByClassName('main-container-views')[0]) {
         document.getElementsByClassName('main-container-views')[0].scrollTop = 0
     }
+
+    if (to.meta.state) {
+        Message.error("当前路由以被禁用，请联系管理员");
+        next(from.fullPath)
+        NProgress.done()
+        return
+    }
+
     // 获取令牌判断用户是否登陆
     const hasToken = getToken()
     // 有令牌 表示已经登陆
@@ -31,41 +39,28 @@ router.beforeEach(async (to, from, next) => {
             // 已登录重定向到首页
             next({ path: '/' })
         } else {
-            //若用户有角色并且有路由切有效
             const user = store.state['user'];
-            const hasRoles = user.roles&&user.roles.length > 0 && user.menus&&user.menus.length > 0
-            if (hasRoles) {
+            let hasRoles = user.roles;
+            // 角色不存在 获取当前角色信息
+            if (!hasRoles.id) {
+                hasRoles = await store.dispatch('user/getUserRoles', user.userInfo.roleId);
+            }
+            if (hasRoles.menus.length) {
                 if (user.valid) {
-                    if(user.userInfo.account==='autchan'){
-                        return next()
-                    }
-                    // 当前路由有效
-                    let isAuthen = await store.dispatch('permission/isAuthenExcludeRoute',to.path)
-                    let isJurisdiction = await store.dispatch('permission/isJurisdiction',to.path)
-                    if(isAuthen){
-                        Message.error(isAuthen);
-                        next({...from, replace: true})
-                        NProgress.done()
-                    }else if(isJurisdiction){
-                        next('/404')
-                    }else{
-                        next()
-                    }
+                    next()
                 } else {
                     // 生成路由
                     let accessRoutes = await store.dispatch('permission/generateRoutes', user)
-                    accessRoutes.forEach(route =>{
+                    store.dispatch('user/setValid')
+                    accessRoutes.forEach(route => {
                         router.addRoute(route);
                     })
                     next({ ...to, replace: true })
-                    store.dispatch('user/setValid')
                 }
             } else {
-                Message.error( "当前用户没有任何权限，请联系管理员");
+                Message.error("当前用户没有任何权限，请联系管理员");
                 await store.dispatch('user/resetToken')
-                setTimeout(()=>{
-                    next(`/login?redirect=${to.path}`)
-                },2000)
+                return 
             }
 
         }

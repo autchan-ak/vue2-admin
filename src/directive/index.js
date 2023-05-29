@@ -1,6 +1,6 @@
 // 全局注册指令
 import Vue from 'vue'
-import store from '@/store'
+import { showLoading, confirm, showError } from "@/utils";
 import Clickoutside from 'element-ui/src/utils/clickoutside'
 
 /**
@@ -9,38 +9,47 @@ import Clickoutside from 'element-ui/src/utils/clickoutside'
  * <button v-permission="menu:view:add">添加</button>
  */
 Vue.directive("permission", {
-  inserted(el, binding) {
+  inserted(el, { value }, vnode) {
     /**
      * el 当前指令的元素  
-     * binding {name,expression,vale}等
+     * binding 权限标识
+     * vnode 当前this
      * */
-    // 获取指令的值: 按钮要求的角色数组
-    const { value: pRoles } = binding;
-    //  获取用户角色
-    const roles = store.getters && store.getters.roles
-
-    if (pRoles && pRoles instanceof Array && pRoles.length > 0) {
-      // 判断用户角色中是否有按钮要求的角色
-      const hasPermission = roles.some(role => {
-        return pRoles.includes(role);
-      })
-      // console.log(hasPermission)
-      // 如果没有权限则删除当前DOM
-      if (!hasPermission) {
-        el.parentNode && el.parentNode.removeChild(el);
+    // 获取所有权限
+    const Button = vnode.context.$route.meta.button;
+    if (!Button || !Button.map(b => b.authority).includes(value)) {
+      // 没有权限移除按钮
+      if (el.parentNode) {
+        el.parentNode.removeChild(el)
       }
-    } else {
-      throw new Error(`需要指定按钮要求按钮权限code,如v-permission="menu:view:add'`)
+      return
     }
-  }
+    Button.forEach(btn => {
+      if (btn.authority === value && btn.state) {
+        el.__vue__.handleClick = () => {
+          showError('已被禁用,请联系管理员')
+        }
+      }
+    });
+  },
 })
+
+/**
+ * 全局权限检查方法
+ * 用在无法删除齐元素
+ * 使用v-if 进行渲染 返回true||false
+ * v-if="$permission($route,'all')"
+ */
+Vue.prototype.$permission = ($route, value) => {
+  return $route.meta.button.map(b => b.authority).includes(value)
+}
 
 /**
  * 自定义粘贴指令
  */
 Vue.directive('paste', {
   bind(el, binding) {
-    el.addEventListener('paste', function(e) {
+    el.addEventListener('paste', function (e) {
       //这里直接监听元素的粘贴事件
       binding.value(e)
     })

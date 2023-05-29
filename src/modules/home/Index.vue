@@ -3,7 +3,7 @@
   <el-card class="box-card">
     <el-row v-if="userData">
       <el-col :sm="24" :md="10">
-        <el-image class="image" :src="$host+userData.avatar" fit="fill"></el-image>
+        <el-image class="image" :src="userData.avatar" fit="fill"></el-image>
         <p class="uname">
           <b>{{ userInfo.uname }}</b>
         </p>

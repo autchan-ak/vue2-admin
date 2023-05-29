@@ -50,23 +50,6 @@
         >
           <i class="el-icon-picture-outline-round" @click="theme = true"></i>
         </el-tooltip>
-        <el-badge :is-dot="noticeBadge" class="item">
-          <i
-            class="el-icon-bell headers-right-left-newsIcon"
-            @mouseout.self="dropHideBtn"
-            @mouseover.self="dropShowBtn"
-          ></i>
-        </el-badge>
-        <!-- 通知栏 -->
-        <!-- <div
-          class="header-right-dropdown"
-          @mouseover="dropdownBtn"
-          @mouseout="dropShow = false"
-        >
-          <el-collapse-transition>
-            <Dropdowns v-show="dropShow" />
-          </el-collapse-transition>
-        </div> -->
         <el-tooltip
           class="item"
           effect="dark"
@@ -85,7 +68,7 @@
           <el-avatar
             shape="square"
             size="large"
-            :src="$host + userInfo.avatar"
+            :src="userInfo.avatar"
           ></el-avatar>
         </div>
         <el-dropdown size="medium" trigger="click" @command="handleCommand">
@@ -121,7 +104,6 @@ import screenfull from "screenfull";
 import Breadcrumb from "../Breadcrumb/Breadcrumb.vue";
 import DrawerTheme from "./theme.vue";
 // 通知栏组件
-import Dropdowns from "../Dropdown/index.vue";
 import squareUrl from "@/assets/image/UserHead.png";
 
 export default {
@@ -141,13 +123,11 @@ export default {
   components: {
     DrawerTheme,
     Breadcrumb,
-    Dropdowns,
   },
   computed: {
     ...mapState("user", ["userInfo"]),
     ...mapState("theme", ["showSidebar"]),
     ...mapState("permission", ["addRoutes"]),
-    ...mapState("notification", ["noticeBadge"]),
   },
   methods: {
     ...mapActions("user", ["resetToken"]),
@@ -202,7 +182,7 @@ export default {
       this.SET_SHOW_SIDEBAR(!this.showSidebar);
     },
     github() {
-      window.open("https://gitee.com/kk0719/autchan/tree/master/ak_vue");
+      window.open("https://gitee.com/todpole/vue2-admin");
     },
     // 全屏
     buttoncli() {
@@ -302,7 +282,7 @@ export default {
 </script>
 <style>
 #he-plugin-simple{
-  z-index: 9999;
+  z-index: 99;
   animation: all .5s;
 }
 #he-plugin-simple>div:last-child>div{

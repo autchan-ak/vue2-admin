@@ -137,3 +137,7 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+@import "@/assets/css/login.scss";
+</style>

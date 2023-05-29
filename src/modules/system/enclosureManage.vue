@@ -43,8 +43,8 @@
           <el-image
             style="width: 40px; height: 40px"
             fit="fill"
-            :src="$host + row.url"
-            :preview-src-list="[$host + row.url]"
+            :src=" row.url"
+            :preview-src-list="[row.url]"
           >
           </el-image>
         </template>

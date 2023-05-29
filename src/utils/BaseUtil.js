@@ -412,24 +412,33 @@ export const openLink = (url, target = '_blank') => {
 
 /**
  * 组装出一颗树结构
+ * 会先排序
  * @param {*} data 数据
- * @param {*} object {id,fid}
+ * @param {*} object {id,fid,order}
  * 返回 children：[]
  */
-export const assembleTree = (data, params) => {
-    let { id, fid } = params || { id: 'id', fid: "parent_id" }
-    const obj = {};
+export const assembleTree = (data, lever = true) => {
+    let { id, fid,order } = { id: 'id', fid: "pid",order:'orderNum' }
+    data = data.sort((a, b) => a[order] - b[order]);
+    let obj = {};
     // * 先生成parent建立父子关系
     data.forEach((item) => {
         obj[item[id]] = item;
     });
-    const parentList = [];
+    let parentList = [];
     data.forEach((item) => {
-        const parent = obj[item[fid]];
+        let parent = obj[item[fid]];
         if (parent) {
-            // * 当前项有父节点
-            parent.children = parent.children || [];
-            parent.children.push(item);
+            if (item.lever === 3 && lever) {
+                // 按钮权限
+                parent.button = parent.button || []
+                parent.button.push(item);
+            } else {
+                // * 当前项有父节点
+                parent.children = parent.children || [];
+                parent.children.push(item);
+            }
+
         } else {
             // * 当前项没有父节点 -> 顶层
             parentList.push(item);
@@ -446,11 +455,11 @@ export const assembleTree = (data, params) => {
  * @param {Function} callback 复制成功回调方法
  */
 export const copyTextToClipboard = (value, v, callback) => {
-    if(v){
+    if (v) {
         var remark = '\n-----------------------------------'
-        +`\n作者:'${loadUserinfo().uname}'\n链接:${window.location.href}\n来源:Autchan`
-        +"\n著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"
-        value+=remark
+            + `\n作者:'${loadUserinfo().uname}'\n链接:${window.location.href}\n来源:Autchan`
+            + "\n著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"
+        value += remark
     }
     let textArea = document.createElement('textarea')
     textArea.style.background = 'transparent'
@@ -458,10 +467,10 @@ export const copyTextToClipboard = (value, v, callback) => {
     document.body.appendChild(textArea)
     textArea.select()
     try {
-      document.execCommand('copy')
-      if (callback) callback()
+        document.execCommand('copy')
+        if (callback) callback()
     } catch (err) {
-      alert('Oops, unable to copy')
-    } 
+        alert('Oops, unable to copy')
+    }
     document.body.removeChild(textArea)
-  }
+}

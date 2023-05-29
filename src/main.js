@@ -12,7 +12,6 @@ import 'nprogress/nprogress.css';
 import "./assets/css/main.scss";
 // svg
 import "./assets/icon";
-
 if (process.env.VUE_APP_LOCAL_MOCK === 'true') {
   const { mockXHR } = require('../mock')
   mockXHR()
@@ -38,7 +37,7 @@ import VCharts from 'v-charts';
 import { dateFormat } from '@/utils/BaseUtil';
 
 Vue.prototype.$dateFormat = dateFormat;
-Vue.prototype.$host = process.env.VUE_APP_PROXY_TARGET;
+Vue.prototype.$host = process.env.VUE_APP_IMAHE_HOST;
 Vue.use(VCharts);
 
 // 制作地图

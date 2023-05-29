@@ -1,88 +1,142 @@
-import axios from 'axios'
-import { Message } from 'element-ui'
-import store from '@/store'
-import { showLoading } from '@/utils'
-import { getToken } from '@/utils/ProjectTools'
-
-// create an axios instance
-const service = axios.create({
-  baseURL: process.env.VUE_APP_REQUEST_BASE_API, // url = base url + request url
-  timeout: 8000, // request timeout
-  shouldRetry: error => isRequestTimeout(error), // 超时重试,
-})
-
-/**
- *  白名单 
- **/
-const Exclude = [/.+\/login/]
+import Axios from 'axios';
+import { BASE64Helper } from '../utils/CryptUtil';
+import { isObject } from '../utils/BaseUtil'
 
 
-// 前缀拦截处理
-service.interceptors.request.use(
-  config => {
-    // 添加 token
-    config.headers['X-Token'] = getToken()
+const axiosUtils = require('axios/lib/utils');
+const normalizeHeaderName = require('axios/lib/helpers/normalizeHeaderName');
+
+const isRequestTimeout = (error) => {
+    return error && (error.code === 'ECONNABORTED' && error.message.indexOf('timeout') !== -1)
+}
+const isNotFound = (error) => {
+    return error && (error.code === 404 || (error.response && error.response.status === 404))
+}
+
+const axiosInstance = Axios.create({
+    transformRequest(data, headers) {
+        normalizeHeaderName(headers, 'Content-Type');
+        if (axiosUtils.isFormData(data)
+            || axiosUtils.isArrayBuffer(data)
+            || axiosUtils.isBuffer(data)
+            || axiosUtils.isStream(data)
+            || axiosUtils.isFile(data)
+            || axiosUtils.isBlob(data)
+        ) {
+            console.log("1111");
+            return data;
+        }
+        if (axiosUtils.isArrayBufferView(data)) {
+            console.log("2222");
+            return data.buffer;
+        }
+        if (axiosUtils.isURLSearchParams(data)) {
+            console.log("3333");
+            return data.toString();
+        }
+        if (isObject(data)) {
+            headers['Content-Type'] = 'application/json;charset=utf-8';
+            return JSON.stringify(data);
+        }
+        return JSON.stringify(data);
+        // return qs.stringify(data);
+    },
+});
+axiosInstance.all = Axios.all
+const { CancelToken } = Axios;
+
+
+// 重复请求处理
+const axiosRepeatRequest = {
+    requests: {},
+    generateRequestId(config) {
+        const method = (config.method || 'get').toLowerCase();
+        const encodeData = config.data ? BASE64Helper.encode(config.data) : ''
+        return `${config.baseURL}${config.url}_${method}_${encodeData}`;
+    },
+    clear(config) {
+        const requestId = config.requestId
+        delete this.requests[requestId]
+        delete config.cancelToken
+        delete config.requestId
+    },
+    handler(config, cancel, isRemoveRightNow) {
+        const requestId = config.requestId ? config.requestId : axiosRepeatRequest.generateRequestId(config)
+        config.requestId = requestId
+        if (this.requests[requestId]) {
+            // 请求存在
+            const axiosRequest = this.requests[requestId]
+            if (isRemoveRightNow) {
+                this.clear(config)
+                delete config.retryCount
+            } else if (axiosRequest.start + config.timeout + 200 - (+new Date()) < 0) {
+                this.clear(config)
+                delete config.retryCount
+            } else {
+                // 取消上次请求
+                axiosRequest.cancel(`request is Duplicate and Canceled`)
+                // 取消后直接移除
+                this.clear(config)
+            }
+        } else {
+            !!cancel && (this.requests[requestId] = { start: +new Date(), cancel })
+        }
+    },
+};
+
+//  request拦截器的执行顺序是: 先加入后执行
+//  response拦截器执行顺序是: 先加入的先执行
+
+axiosInstance.interceptors.request.use((config) => {
+    // 防重复请求处理
+    config.cancelToken = new CancelToken((cancel) => {
+        axiosRepeatRequest.handler(config, cancel)
+    })
     return config
-  },
-  error => {
-    // do something with request error
-    alert("看一下怎么会到这里")
-    console.log(error) // for debug
+}, (error) => {
+    console.error(error)
     return Promise.reject(error)
-  }
-)
+});
 
-// response interceptor
-service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
 
-  /**
-   * Determine the request status by custom code
-   * You can also judge the status by HTTP Status Code
-   */
-  response => {
-    const res = response.data
-    showLoading()
-    // if the custom code is not 2000, it is judged as an error.
-    if (res.code === 2000) return res
-    Message({
-      message: res.message || 'Error',
-      type: res.type || 'error',
-      duration: 3 * 1000
-    })
-    if (res.code === 2001) return res
-    // 401   重新登陆
-    if (res.code === 401) {
-      // to re-login
-      setTimeout(() => {
-        store.dispatch('user/resetToken').then(() => {
-          location.reload()
-        })
-      },2000)
+axiosInstance.interceptors.response.use((response) => {
+    const { config } = response
+    // 请求完成 移除
+    axiosRepeatRequest.handler(config, null, true)
+    return response;
+}, (error) => {
+    const { config = {} } = error
+    if (Axios.isCancel(error)) {
+        console.warn(error.message)
+        // 请求完成 移除
+        axiosRepeatRequest.handler(config, null, true);
+        return Promise.reject(error)
     }
-    // 除 2000+ 一律看做失败
-    throw new Error(res.message || 'Error',)
-  },
-  error => {
-    if (error.message.includes('timeout')) {
-      error.message = '请求超时！'
-    } else if (error.message.includes('404')) {
-      error.message = '请求失败！未找到请求路由'
-    } else if (error.message.includes('500')) {
-      error.message = '请求失败！服务器错误'
-    }
-    console.log("请求打印", error.message);
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
-    showLoading()
-    return Promise.reject(error)
-  }
-)
 
-export default service
+    // 默认超时重试
+    if (isRequestTimeout(error)) {
+        config.retryCount = config.retryCount || 0
+        if (config.retryCount >= 1) {
+            // 请求完成 移除
+            axiosRepeatRequest.handler(config, null, true);
+            return Promise.reject(error)
+        }
+        config.retryCount += 1
+        const retryRequest = new Promise((resolve) => {
+            setTimeout(() => resolve(), config.retryDelay);
+        });
+
+        return retryRequest.then(() => {
+            const retryConfig = { ...config }
+            return axiosInstance.request(retryConfig)
+        });
+    }
+    // 请求完成 移除
+    axiosRepeatRequest.handler(config, null, true);
+
+    return Promise.reject(error);
+});
+
+
+export default axiosInstance;
+export { isRequestTimeout, isNotFound }

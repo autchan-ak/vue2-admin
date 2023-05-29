@@ -1,6 +1,7 @@
 # vue2-admin
 
 vue2 后台管理系统模板
+[gitee 地址](https://gitee.com/todpole/vue2-admin)
 
 本项目可作为模板进行二次开发，基础功能均可以直接复用。
 
@@ -70,4 +71,60 @@ el 图标也可传入
   height: 22px;
   fill: currentColor; //重点
 }
+```
+
+
+### 默认启动为mock
+- 账号：admin  || autchan  || test
+- 密码：随意
+- （三个账号都一样）
+
+
+
+### 文件目录说明src下
+
+```
+└──/assets/                   静态资源
+│  ├── ...
+│  ├──
+├── /components/              全局组件
+│  ├── index.js               自动注册 实例 入口
+│  ├── ...
+│  │
+├── /directive/               全局指令
+│  ├── index.js               自动注册 实例 入口
+│  ├── ...
+│  │
+├── /filters/                 全局过滤器
+│  ├── index.js               自动注册 实例 入口
+│  ├── ...
+│  │
+├── /layout/                  布局页
+│  ├── ...                    不多解释
+│  │
+├── /modules/                 模块开发
+│  ├── /test/                 示例模版
+│  ├── ...                    页面都在此处开发
+│  │
+├── /request/                 请求方法
+│  ├── ...                    不多解释
+│  │
+├── /router/                  路由
+│  ├── ...                    不多解释
+│  │
+├── /store/                   数据存储
+│  ├── ...                    不多解释
+│  │
+├── /utils/                   工具方法文件夹
+│  │  ├── BaseUtil.js         业务工具类
+│  │  ├── ComponentUtil.js    注册组件类
+│  │  ├── CryptUtil.js        加密工具类
+│  │  ├── functions.js        公共方法类
+│  │  ├── ProjectTools.js     保存信息类
+│  │  ├── RegExpUtil.js       各种正则方法类
+│  │  ├── theme.js            主题样式类
+│  │  └── ...
+├── package.json
+├── README.md
+
 ```

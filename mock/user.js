@@ -2,32 +2,34 @@ const tokens = {
   admin: {
     token: 'admin-token'
   },
-  autchan:{
-    token:'autchan-token'
+  autchan: {
+    token: 'autchan-token'
   },
-  test:{
-    token:'test-token'
+  test: {
+    token: 'test-token'
   }
 }
 
 const users = {
   'admin-token': {
-    roles: ['admin'],
+    roleId: "f3a6b40d-a4c2-4d49-a23b-4194ad2ebc13",
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    name: 'Super Admin',
+    login_time:"2023-05-20T05:20:00.000Z",
   },
   'autchan-token': {
-    roles: ['autchan','admin'],
-    introduction: 'I am an editor',
-    avatar: require('./assets/image/profile.jpg'),
+    roleId: "f3a6b40d-a4c2-4d49-a23b-4194ad2ebc13",
+    introduction: '我就是我，不一样的烟火~',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    login_time:"2023-05-20T05:20:00.000Z",
     name: '阿坤'
   },
-  'test-token':{
-    // roles: ['editor'],
-    roles: ['test'],
+  'test-token': {
+    roleId: "f3a6b40d-a4c2-4d49-a23b-4194ad2ebc13",
     introduction: 'I am an editor',
     avatar: 'https://t14.baidu.com/it/u=2637606604,2200077212&fm=224&app=112&f=JPEG',
+    login_time:"2023-05-20T05:20:00.000Z",
     name: '测试'
   }
 }
@@ -39,66 +41,26 @@ module.exports = [
     type: 'post',
     response: config => {
       const { username } = config.body
-      const token = tokens[username]
+      const token = tokens[username] || false
       if (!token) {
         return {
-          code: 1000,
-          message: '用户不存在'
+          meta: { status: 500, msg: "用户不存在", },
         }
       }
       const userInfo = users[token.token]
-      // mock error
-      console.log("mock--登陆");
-      if (!token) {
-        return {
-          code: 1000,
-          message: '用户不存在'
-        }
-      }
       return {
-        code: 2000,
-        data: {...token,userInfo}
+        meta: { status: 200 },
+        data: { ...token, userInfo }
       }
     }
   },
-  {
-    url: '/user/page',
-    type: 'get',
-    response:()=>{
-      return
-    }
-  },
-  // get user info
-  {
-    url: '/vue-element-admin/user/info\.*',
-    type: 'get',
-    response: config => {
-      const { token } = config.query
-      const info = users[token]
-
-      // mock error
-      if (!info) {
-        return {
-          code: 50008,
-          message: 'Login failed, unable to get user details.'
-        }
-      }
-
-      return {
-        code: 20000,
-        data: info
-      }
-    }
-  },
-
   // user logout
   {
-    url: '/vue-element-admin/user/logout',
+    url: '/user/logout',
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
-        data: 'success'
+        meta: { status: 200 },
       }
     }
   }

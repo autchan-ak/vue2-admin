@@ -6,7 +6,7 @@
         <i class="close el-icon-error" @click="close" />
         <div class="banner"><div class="img_banner"></div></div>
         <div class="avatar">
-          <img :src="$host + contact.avatar" />
+          <img :src="contact.avatar" />
         </div>
         <div class="introduction">
           <span

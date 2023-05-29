@@ -1,20 +1,25 @@
 // 权限管理模块
-import { asyncRoutes,modulsRoutes } from '@/router'
+import { asyncRoutes } from '@/router'
 import Layout from '@/layout' //布局页
+import { assembleTree } from "@/utils/BaseUtil";
+
 /**
  * 将路由按指定格式重组
  * @menu 用户权限路由
  */
+
 function formatRouter(menu) {
     let res = [];
     menu.forEach(m => {
         res.push({
-            path: m.url,
-            hidden: !!m.is_hidden,
-            component:loadView(m.component),
-            redirect:redirectView(m),
+            path: m.path[0] !== '/' ? `/${m.path}` : m.path,
+            hidden: !!m.isHidden,
+            component: loadView(m),
+            redirect: redirectView(m),
             meta: {
-                title: m.menu_title,
+                button: m.button,
+                state: m.state,
+                title: m.title,
                 sort: m.orderNum,
                 icon: m.icon,
                 ena: !!m.ena
@@ -27,19 +32,22 @@ function formatRouter(menu) {
     })
     return res
 }
-const loadView = (view)=>{
-    if(view==='#') return Layout;
-    if(view[0]!=='/'){
-        view = '/'+ view
+const loadView = (m) => {
+    if (m.lever == 1) return Layout;
+    if (m.path === '#') return Layout;
+    if (m.path[0] !== '/') {
+        m.path = '/' + m.path
     }
     // return (resolve) => require([`@/modules${view}`], resolve)
-    return ()=> import(`@/modules${view}`)
+    return () => import(`@/modules${m.path}`)
 }
-const redirectView = (m)=>{
-    if(m.component==='#' && m.children){
-        return m.children[0].url || null
+const redirectView = (m) => {
+    if (m.children) {
+        if (m.children[0].path[0] === '/') return m.children[0].path
+        return `/${m.children[0].path}`
     }
     return null
+
 }
 /**
  * 判断当前路径是否可用
@@ -78,58 +86,31 @@ function isJurisdictionPath(route, path) {
     return v
 }
 const state = {
-    routes: asyncRoutes, //完整路由表
-    addRoutes: []  //用户可访问路由表
-}
-
-const getters = {
-    getUserRoutes(state) {
-        return state.addRoutes || []
-    },
+    routes: [],
 }
 
 const mutations = {
     SET_ROUTES: (state, routes) => {
-        // addRoutes 用户可以访问的权限
-        state.addRoutes = routes
+        state.routes = [...asyncRoutes, ...routes]
     }
 }
 
 const actions = {
     generateRoutes({ commit }, users) {
         return new Promise(resolve => {
-            // 如果是超管用户返回全量路由
-            if(users.userInfo.account==='autchan'){
-                commit('SET_ROUTES', modulsRoutes)
-                resolve(modulsRoutes)
-                return
-            }
             // 格式化菜单 并
-            let accessedRoutes = formatRouter(users.menus)
-            // 添加固定路由
-            accessedRoutes.unshift(asyncRoutes[0]);
-            accessedRoutes.push(asyncRoutes[asyncRoutes.length - 1])
+            let Tree = assembleTree(users.roles.menus)
+            let accessedRoutes = formatRouter(Tree)
             commit('SET_ROUTES', accessedRoutes)
             resolve(accessedRoutes)
         })
     },
-    isAuthenExcludeRoute({ commit, getters }, path) {
-        return new Promise(resolve => {
-            res = resolve(isAuthenEna(getters.getUserRoutes, path))
-        })
-    },
-    isJurisdiction({ commit, getters }, path) {
-        return new Promise(resolve => {
-            res = resolve(isJurisdictionPath(getters.getUserRoutes, path))
-        })
-    }
 
 }
 
 export default {
     namespaced: true,
     state,
-    getters,
     mutations,
     actions
 }

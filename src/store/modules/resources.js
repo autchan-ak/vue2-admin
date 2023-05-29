@@ -1,4 +1,4 @@
-import Request from '@/request/request.js'
+import Request from '@/request'
 import { showError } from "@/utils";
 
 const mutations = {

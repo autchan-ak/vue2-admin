@@ -7,7 +7,7 @@
           <div class="index-head-left">
             <el-avatar
               class="index-head-left-avatar"
-              :src="$host + userInfo.avatar"
+              :src="userInfo.avatar"
             ></el-avatar>
             <div class="index-head-left-text">
               <div>
