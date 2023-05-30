@@ -31,7 +31,6 @@ const actions = {
     uploadFlie({ rootGetters }, params = {}) {
         let type = params.file.type;
         let accept = [], url = `/upload/file${params.renam ? '/renam' : ''}`
-        console.log(params);
         switch (params.type) {
             case "10":
                 accept = ["image/jpeg", "image/gif", "image/png"]

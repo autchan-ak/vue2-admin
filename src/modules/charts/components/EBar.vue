@@ -134,7 +134,6 @@ export default {
           series(v) {
             // 设置柱子的样式
             v.forEach(i => {
-              console.log("series", i);
               i.barWidth = 20;
             //   i.itemStyle={
             //     barBorderRadius:[10,10,10,10],

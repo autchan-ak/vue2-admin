@@ -108,7 +108,6 @@ export default {
       }
     },
     readExcelFromRemoteFile(url) {
-        console.log("word______________--");
       let that = this,
         xhr = new XMLHttpRequest();
       xhr.open("get", url, true);

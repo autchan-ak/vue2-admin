@@ -70,7 +70,6 @@ export default {
   },
   watch: {
     "$route.query.id"(v) {
-      console.log(v);
       this.activeName = this.$route.query.type;
       this.id = v;
       this.$nextTick(() => {

@@ -75,7 +75,6 @@ export default {
             series(v) {
             // 设置柱子的样式
             v.forEach(i => {
-              // console.log("series", i);
               i.barWidth = 20;
               // i.itemStyle={
               //   barBorderRadius:[10,10,10,10],
@@ -156,38 +155,9 @@ export default {
             });
             this.chartData[i].rows = this.chartData[i].rows.sort((a,b)=>a['排序']-b['排序'])
         },1000)
-        // return
-//           // 图表初始化
-//           console.log(document.getElementById("mychart"));
-//           this.myChart = this.$echarts5.init(document.getElementById("mychart"));
-// console.log("@@@@@@@@@@@@@@");
-//     console.log(this.myChart);
-//     // 数据初始化
-//     for (let i = 0; i < 5; ++i) {
-//       this.sortData.push(Math.round(Math.random() * 200));
-//     }
-//     // 数据刷新
-//     setInterval(() => {
-//       this.pageUpdate();
-//     }, 3000);
+
       }
     },
-    // pageUpdate(){
-    //     console.log(this.dynamicSortZZTOption.series[0].data);
-    //   this.dynamicSortZZTOption.series[0].data = this.sortData;
-    //   for (let i = 0; i < this.sortData.length; ++i) {
-    //     if (Math.random() > 0.9) {
-    //       this.sortData[i] += Math.round(Math.random() * 2000);
-    //     } else {
-    //       this.sortData[i] += Math.round(Math.random() * 200);
-    //     }
-    //   }
-    //   this.myChart.setOption(this.dynamicSortZZTOption);
-    //   //随着屏幕大小调节图表
-    //   window.addEventListener("resize", () => {
-    //     this.myChart.resize();
-    //   });
-    // }
   },
 };
 </script>

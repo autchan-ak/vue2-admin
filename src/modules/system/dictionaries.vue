@@ -130,7 +130,6 @@ export default {
           return false;
         }
         showLoading("正在保存");
-        console.log(this.form);
         let res = await this.zdModify({ ...this.form });
         if (res.type === "success") {
           this.handleClose();

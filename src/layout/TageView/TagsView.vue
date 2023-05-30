@@ -118,7 +118,6 @@ export default {
       });
     },
     closeOthersTags() {
-      console.log("!!!!!!!!");
       this.$router.push(this.selectedTag.path);
       this.delOthersViews(this.selectedTag).then(() => {
         this.moveToCurrentTag();
@@ -144,7 +143,6 @@ export default {
           {
             label:'关闭其它',
             onClick: () => {
-              console.log("@@@@@@@");
               this.closeOthersTags()
             },
           },

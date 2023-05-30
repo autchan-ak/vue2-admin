@@ -23,15 +23,12 @@ const axiosInstance = Axios.create({
             || axiosUtils.isFile(data)
             || axiosUtils.isBlob(data)
         ) {
-            console.log("1111");
             return data;
         }
         if (axiosUtils.isArrayBufferView(data)) {
-            console.log("2222");
             return data.buffer;
         }
         if (axiosUtils.isURLSearchParams(data)) {
-            console.log("3333");
             return data.toString();
         }
         if (isObject(data)) {
@@ -39,7 +36,6 @@ const axiosInstance = Axios.create({
             return JSON.stringify(data);
         }
         return JSON.stringify(data);
-        // return qs.stringify(data);
     },
 });
 axiosInstance.all = Axios.all
