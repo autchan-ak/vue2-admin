@@ -27,6 +27,7 @@
     "vue": "^2.6.11",
     "vue-contextmenujs": "^1.4.9",
     "vue-count-to": "^1.0.13",
+    "vue-cropper": "^0.6.2",
     "vue-esign": "^1.1.4",
     "vue-particles": "^1.0.9",
     "vue-prism-editor": "^0.5.1",

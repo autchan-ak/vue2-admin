@@ -84,6 +84,7 @@ const axiosRepeatRequest = {
 //  response拦截器执行顺序是: 先加入的先执行
 
 axiosInstance.interceptors.request.use((config) => {
+    console.log("请求接口：",config);
     // 防重复请求处理
     config.cancelToken = new CancelToken((cancel) => {
         axiosRepeatRequest.handler(config, cancel)

@@ -1,9 +1,29 @@
-import Request from '@/request'
+import Request from '@/request/request.js'
 
 export default {
     actions: {
-        setUserInfo({ commit }, reqData) {
-            return Request.post("/user/setUserInfo", reqData)
+        // 用户信息
+        getUserInfo({ }) {
+            return Request.get("/user/userInfo")
+                .then(res => {
+                    return Promise.resolve(res.data);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        },
+        // 修改头像
+        userUpload() {
+            return Request.post("/user/upload")
+                .then(res => {
+                    return Promise.resolve(res.data);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        },
+        severUserInfo({ commit }, reqData) {
+            return Request.post("/user/update", reqData)
                 .then(res => {
                     return Promise.resolve(res.data);
                 })
@@ -22,24 +42,25 @@ export default {
                 });
         },
         // 发送邮件验证码
-        setEmail({commit},reqData){
-            return Request.post("/user/setEmail", reqData)
-            .then(res => {
-                return Promise.resolve(res.data);
-            })
-            .catch(err => {
-                return Promise.reject(err);
-            });
+        setEmail({ commit }, reqData) {
+            return Request.post("/user/code", reqData)
+                .then(res => {
+                    return Promise.resolve(res.data);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
         },
         // 校验并修改
-        checkCodeAdd({},reqData){
-            return Request.post("/user/checkCode", reqData)
-            .then(res => {
-                return Promise.resolve(res);
-            })
-            .catch(err => {
-                return Promise.reject(err);
-            });
+        checkCodeAdd({ }, reqData) {
+            let phone = reqData.phone
+            return Request.post(`/user/${phone ? 'phone' : 'email'}`, reqData)
+                .then(res => {
+                    return Promise.resolve(res);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
         }
     }
 }

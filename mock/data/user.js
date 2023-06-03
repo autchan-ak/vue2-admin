@@ -1,98 +1,73 @@
-export const loginData = {
-    "autchan": {
-        "userName": "阿坤",
-        "account": "autchan",
-        "userId": "autchan",
-        "token": null,
-        "roles": [
-            {
-                "name": "系统管理员",
-                "code": "SystemManager"
-            },
-            {
-                "name": "用户管理员",
-                "code": "AdminUser"
-            },
-            {
-                "name": "测试角色",
-                "code": "test"
-            }
-        ],
-        "menus": []
-    },
-    "admin": {
-        "userName": "超级管理员",
-        "account": "admin",
-        "userId": "admin",
-        "token": null,
-        "roles": [
-            {
-                "name": "系统管理员",
-                "code": "SystemManager"
-            },
-            {
-                "name": "用户管理员",
-                "code": "AdminUser"
-            },
-            {
-                "name": "测试角色",
-                "code": "test"
-            }
-        ],
-        "menus": []
-    },
-    "test": {
-        "userName": "用户1",
-        "account": "test",
-        "userId": "test",
-        "token": null,
-        "roles": [
-            {
-                "name": "测试角色",
-                "code": "test"
-            }
-        ],
-    }
-}
 
-export const userList = {
-    "success":true,
-    "code":"2000",
-    "data": [
-        {
-            "id":"1",
-            "userName":"admin",
-            "account":"admin",
-            "locked":false,
-            "introduction":"我是超级管理员",
-            "createTime": 1540533196000,
-        },
-        {
-            "id": "2",
-            "userName": "阿坤",
-            "account": "autchan",
-            "introduction":"啥也不是~~~",
-            "locked": false,
-            "createTime": 1540533023000,
-        },
-        {
-            "id": "3",
-            "userName": "杰克",
-            "account": "jack",
-            "introduction":"汤姆,汤姆！我是杰克啊",
-            "locked": true,
-            "createTime": 1540533006000,
-        },
-        {
-            "id": "4",
-            "userName": "测试角色1",
-            "account": "test1",
-            "locked": true,
-            "introduction":"测试随便玩",
-            "createTime": 1557042558000,
-        },
-    ]
-}
+const { RolesList } = require('./role')
+
+export const UserList = [
+    {
+        "id": "1",
+        "nickName": "admin",
+        "account": "admin",
+        "user_desc":"请不要恶意修改此账号",
+        "introduction": "我就是我，不一样的烟火~",
+        "createdAt": 1540533196000,
+        "roleId": "aaabbbcccdddeeefff",
+        "role_name": RolesList.filter(i => i.id === 'aaabbbcccdddeeefff')[0].role_name,
+        "state": true,
+        "avatar": 'https://t14.baidu.com/it/u=2637606604,2200077212&fm=224&app=112&f=JPEG',
+        "password": "123456",
+        "email": "autchan@163.com",
+        "phone": "11012010086",
+        "loginAt": "2023-01-09T03:50:48.000Z",
+    },
+    {
+        "id": "2",
+        "nickName": "体验",
+        "user_desc":"开放访问",
+        "avatar": 'https://t14.baidu.com/it/u=2637606604,2200077212&fm=224&app=112&f=JPEG',
+        "account": "test",
+        "introduction": "哎，就是玩~",
+        "createdAt": 1557042558000,
+        "roleId": "qqqwwweeerrrttt",
+        "role_name": RolesList.filter(i => i.id === 'qqqwwweeerrrttt')[0].role_name,
+        "state": true,
+        "password": "123456",
+        "email": "",
+        "avatar": 'https://t14.baidu.com/it/u=2637606604,2200077212&fm=224&app=112&f=JPEG',
+        "phone": "",
+        "loginAt": "2023-01-09T03:50:48.000Z",
+    },
+    {
+        "id": "3",
+        "nickName": "杰克",
+        "account": "jack",
+        "introduction": "汤姆,汤姆！我是杰克啊",
+        "createdAt": 1540533006000,
+        "state": false,
+        "user_desc":"",
+        "password": "123456",
+        "avatar": 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        "email": "",
+        "phone": "",
+        "loginAt": "2023-01-09T03:50:48.000Z",
+        "roleId": "qqqwwweeerrrttt",
+        "role_name": RolesList.filter(i => i.id === 'qqqwwweeerrrttt')[0].role_name,
+    },
+    {
+        "id": "4",
+        "nickName": "测试角色1",
+        "account": "test1",
+        "introduction": "测试随便玩",
+        "createdAt": 1557042558000,
+        "state": false,
+        "password": "123456",
+        "email": "",
+        "avatar": "",
+        "phone": "",
+        "loginAt": "2023-01-09T03:50:48.000Z",
+        "roleId": "test-test",
+        "role_name": RolesList.filter(i => i.id === 'qqqwwweeerrrttt')[0].role_name,
+
+    },
+]
 
 
 

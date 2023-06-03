@@ -5,6 +5,7 @@
     center
     :visible.sync="show"
     width="30%"
+    top="5%"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="handleClose"
@@ -14,17 +15,23 @@
       size="small"
       v-model="filterText"
     />
-    <el-tree
-      ref="tree"
-      :data="menuList"
-      show-checkbox
-      node-key="id"
-      :props="defaultProps"
-      :default-expanded-keys="expandedKeys"
-      check-strictly
-      :filter-node-method="filterNode"
+    <el-checkbox
+      v-model="menuNodeAll"
+      @change="handleCheckedTreeNodeAll($event)"
+      >全选/全不选</el-checkbox
     >
-    </el-tree>
+    <el-scrollbar style="height: 60vh">
+      <el-tree
+        ref="tree"
+        :data="menuList"
+        show-checkbox
+        node-key="id"
+        :props="defaultProps"
+        :default-expanded-keys="expandedKeys"
+        check-strictly
+        :filter-node-method="filterNode"
+      />
+    </el-scrollbar>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">取 消</el-button>
       <el-button type="primary" @click="_sever">确 定</el-button>
@@ -43,7 +50,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    id: Number,
+    row: {
+      type: Object,
+      default: () => {},
+    },
     title: {
       type: String,
       default: "角色权限",
@@ -55,8 +65,10 @@ export default {
       filterText: "",
       defaultProps: {
         children: "children",
-        label: "menu_title",
+        label: "title",
       },
+      menuNodeAll: false,
+      menuOptions: [],
       expandedKeys: [],
     };
   },
@@ -71,28 +83,30 @@ export default {
   },
 
   methods: {
-    ...mapActions("system", ["getList", "jurisdiction", "modifyJurisdiction"]),
+    ...mapActions("system", ["getList", "modifyJurisdiction"]),
     async init() {
       showLoading(true);
       // 获取所有目录权限
-      this.menuList = assembleTree(await this.getList());
-      // 获取当前角色的权限，
-      showLoading(true);
-      let res = await this.jurisdiction({ url: "menu", id: this.id });
-      this.expandedKeys = res;
-      this.$refs.tree.setCheckedKeys([...res]);
+      let { data } = await this.getList();
+      this.menuOptions = [...data];
+      this.menuList = assembleTree(data, false);
+      this.expandedKeys = this.row.menus.map((m) => m.id);
+      this.$refs.tree.setCheckedKeys([...this.expandedKeys]);
+    },
+    // 全选
+    handleCheckedTreeNodeAll(value) {
+      this.$refs.tree.setCheckedNodes(value ? this.menuOptions : []);
     },
     // 过滤树结构
     filterNode(value, data) {
       if (!value) return true;
-      return data.menu_title.indexOf(value) !== -1;
+      return data.title.indexOf(value) !== -1;
     },
     async _sever() {
       showLoading("正在保存");
       await this.modifyJurisdiction({
-        url: "menu",
-        id: this.id,
-        key: this.$refs.tree.getCheckedKeys().join(","),
+        id: this.row.id,
+        menuIds: this.$refs.tree.getCheckedKeys(),
       });
       this.handleClose();
     },
@@ -104,5 +118,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped></style>

@@ -2,9 +2,9 @@ import Request from '@/request'
 
 export default {
     actions: {
-        // 目录列表
+        // 菜单列表
         getList({ commit }, reqData) {
-            return Request.post("/system/menu/list", reqData)
+            return Request.post("/system/menus/list", reqData)
                 .then(res => {
                     return Promise.resolve(res.data);
                 })
@@ -12,8 +12,11 @@ export default {
                     return Promise.reject(err);
                 });
         },
+
+        // 菜单保存
         preservation({ commit }, reqData) {
-            return Request.post("/system/menu/preservation", reqData)
+            let value = reqData.id ? 'update' : 'create'
+            return Request.post(`/system/menus/${value}`, reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -21,8 +24,10 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        rome({ }, reqData) {
-            return Request.post("/system/menu/rome", reqData)
+
+        // 菜单启用
+        menusState({ }, reqData) {
+            return Request.post("/system/menus/state", reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -30,10 +35,12 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        setMenuEna({ }, reqData) {
-            return Request.post("/system/menu/enable", reqData)
+
+        // 菜单删除
+        menusRome({ }, reqData) {
+            return Request.post("/system/menus/delete", reqData)
                 .then(res => {
-                    return Promise.resolve(res.data);
+                    return Promise.resolve(res);
                 })
                 .catch(err => {
                     return Promise.reject(err);
@@ -41,16 +48,7 @@ export default {
         },
         // 用户列表
         userList({ }, reqData) {
-            return Request.post("/user/list", reqData)
-                .then(res => {
-                    return Promise.resolve(res);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        userListAll() {
-            return Request.post("/user/list/all")
+            return Request.post("/system/users/list", reqData)
                 .then(res => {
                     return Promise.resolve(res.data);
                 })
@@ -58,8 +56,11 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        userRome({ }, reqData) {
-            return Request.post("/user/rome", reqData)
+
+        // 保存用户
+        userSeverForm({ commit }, reqData) {
+            let value = reqData.id ? 'update' : 'create'
+            return Request.post(`/system/users/${value}`, reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -67,28 +68,10 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        // 用户启用禁用
-        setUserEna({ }, reqData) {
-            return Request.post("/user/enable", reqData)
-                .then(res => {
-                    return Promise.resolve(res.data);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        userReg({ }, reqData) {
-            return Request.post("/user/reg", reqData)
-                .then(res => {
-                    return Promise.resolve(res);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
+
         // 重置用户密码
-        resetPassWord({ }, reqData) {
-            return Request.post("/user/resetPwd", reqData)
+        resetPassword({ }, reqData) {
+            return Request.post(`/system/users/reset`, reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -96,18 +79,10 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        // 用户权限
-        getuserRoles({ }, reqData) {
-            return Request.post("/user/roles", reqData)
-                .then(res => {
-                    return Promise.resolve(res.data);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        setUserRules({ }, reqData) {
-            return Request.post("/user/setRoles", reqData)
+
+        // 用户删除
+        userDelete({ }, reqData) {
+            return Request.post("/system/users/delete", reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -115,18 +90,21 @@ export default {
                     return Promise.reject(err);
                 });
         },
+
+        // 用户启用禁用
+        userState({ }, reqData) {
+            return Request.post("/system/users/state", reqData)
+                .then(res => {
+                    return Promise.resolve(res);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        },
+
         // 角色列表
         rolesList({ }, reqData) {
-            return Request.post("/roles/list", reqData)
-                .then(res => {
-                    return Promise.resolve(res);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        setEna({ }, reqData) {
-            return Request.post("/roles/enable", reqData)
+            return Request.post("/system/roles/list", reqData)
                 .then(res => {
                     return Promise.resolve(res.data);
                 })
@@ -134,38 +112,10 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        rolesPreservation({ commit }, reqData) {
-            return Request.post("/roles/preservation", reqData)
-                .then(res => {
-                    return Promise.resolve(res);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        // 权限删除
-        rolesRome({ }, reqData) {
-            return Request.post("/roles/rome", reqData)
-                .then(res => {
-                    return Promise.resolve(res);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        // 权限获取
-        jurisdiction({ commit }, reqData) {
-            return Request.post(`/roles/jurisdiction/${reqData.url}`, { id: reqData.id })
-                .then(res => {
-                    return Promise.resolve(res.data);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        // 保存权限
+
+        // 保存角色权限
         modifyJurisdiction({ }, reqData) {
-            return Request.post(`/roles/modifyJurisdiction/${reqData.url}`, reqData)
+            return Request.post(`/system/roles/update`, reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -173,10 +123,22 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        // 资源
-        // 目录列表
-        getFileList({ commit }, reqData) {
-            return Request.post("/upload/list", reqData)
+
+        // 角色新增修改
+        rolesSeve({ }, reqData) {
+            let value = reqData.id ? 'update' : 'create'
+            return Request.post(`system/roles/${value}`, reqData)
+                .then(res => {
+                    return Promise.resolve(res.data);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        },
+
+        // 角色删除
+        rolesRome({ }, reqData) {
+            return Request.post("/roles/delete", reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -184,42 +146,6 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        flieRome({ }, reqData) {
-            return Request.post("/upload/delete", reqData)
-                .then(res => {
-                    return Promise.resolve(res);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        // 字典管理
-        getZdList(){
-            return Request.post("/system/zd/list")
-            .then(res => {
-                return Promise.resolve(res.data);
-            })
-            .catch(err => {
-                return Promise.reject(err);
-            });
-        },
-        zdRome({},reqData){
-            return Request.post("/system/zd/del",reqData)
-            .then(res => {
-                return Promise.resolve(res);
-            })
-            .catch(err => {
-                return Promise.reject(err);
-            });
-        },
-        zdModify({},reqData){
-            return Request.post("/system/zd/modify",reqData)
-            .then(res => {
-                return Promise.resolve(res);
-            })
-            .catch(err => {
-                return Promise.reject(err);
-            });
-        }
+
     }
 }

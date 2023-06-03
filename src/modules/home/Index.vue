@@ -7,15 +7,18 @@
         <p class="uname">
           <b>{{ userInfo.uname }}</b>
         </p>
-        <el-upload
-          action
-          :multiple="false"
-          :http-request="_uploadImg"
-          :show-file-list="false"
-          accept=".png,.jpg,.gif"
+        <el-button
+          v-permission="'upload'"
+          type=""
+          size="mini"
+          @click="avatarShow = true"
+          >修改头像</el-button
         >
-          <el-button size="small" plain>修改头像</el-button>
-        </el-upload>
+        <ImageCropper
+          title="裁剪头像"
+          :dialogVisible.sync="avatarShow"
+          @close="closeAvatarShow"
+        />
         <el-divider> 信息绑定 </el-divider>
         <div class="user_info">
           <div>
@@ -50,13 +53,7 @@
         >
       </el-col>
       <el-col :sm="24" :md="14">
-        <el-form
-          ref="userForm"
-          :model="userData"
-          label-width="100px"
-          :rules="formRules"
-          style="width: 80%"
-        >
+        <el-form ref="userForm" :model="userData" label-width="100px">
           <el-form-item label="">
             <el-divider> 个人信息 </el-divider>
           </el-form-item>
@@ -64,33 +61,26 @@
             <div style="text-align: left">{{ userData.account }}</div>
           </el-form-item>
           <el-form-item label="角色：">
-            <div style="text-align: left" class="userRoles">
-              <span v-for="(k, i) in userData.roles" :key="i"
-                >{{ k.name }}
-              </span>
+            <div style="text-align: left">
+              {{ userData.role_name }}
             </div>
           </el-form-item>
-          <el-form-item label="真实姓名：" prop="uname">
-            <el-input v-model="userData.uname"></el-input>
+          <el-form-item label="昵称：" prop="nickName">
+            <el-input
+              v-model="userData.nickName"
+              placeholder="请输入您的昵称"
+            />
           </el-form-item>
-          <el-form-item label="性别：">
-            <el-select
-              v-model="userData.sex"
-              placeholder="请选择您的性别"
-              style="width: 100%"
-            >
-              <el-option label="男" :value="1"></el-option>
-              <el-option label="女" :value="0"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="个人描述：">
+
+          <el-form-item label="个人简介：">
             <el-input
               type="textarea"
               rows="5"
-              placeholder="简单描述一下自己~"
+              placeholder="简单描述一下自己"
               v-model="userData.introduction"
-            ></el-input> </el-form-item
-          ><el-form-item label="">
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
             <el-button
               style="width: 100%"
               type="success"
@@ -116,24 +106,26 @@
       >
         <el-form-item v-if="contact.phone" label="手机：" prop="content">
           <el-input
-            v-model="contact.content"
+            v-model.trim="contact.content"
             placeholder="请输入您的手机号"
           ></el-input>
         </el-form-item>
         <el-form-item v-else label="邮箱：" prop="content">
           <el-input
-            v-model="contact.content"
+            v-model.trim="contact.content"
             placeholder="请输入您的邮箱"
           ></el-input>
         </el-form-item>
         <el-form-item label="验证码：">
-          <el-input v-model="contact.code" placeholder="请输入验证码"
+          <el-input v-model.trim="contact.code" placeholder="请输入验证码"
             ><el-button
               slot="append"
               icon="el-icon-thumb"
               @click="setCode"
               :disabled="!!contact.time"
-              >{{ contact.time ? contact.time : "获取验证码" }}</el-button
+              >{{
+                contact.time ? `${contact.time}s后获取` : "获取验证码"
+              }}</el-button
             >
           </el-input>
         </el-form-item>
@@ -174,6 +166,7 @@ export default {
     };
     return {
       dialogFormVisible: false,
+      avatarShow: false,
       contact: {
         dialog: false,
         title: "修改手机",
@@ -186,17 +179,6 @@ export default {
         content: [{ validator: validateCode, trigger: "blur" }],
       },
       userData: null,
-      formRules: {
-        uname: [
-          { required: true, message: "请输入真实姓名", trigger: "blur" },
-          {
-            min: 2,
-            max: 10,
-            message: "长度在 3 到 10 个字符",
-            trigger: "blur",
-          },
-        ],
-      },
       fileList: [],
     };
   },
@@ -208,9 +190,10 @@ export default {
   },
 
   methods: {
-    ...mapActions("user", ["getUserInfo", "resetToken"]),
+    ...mapActions("user", ["resetToken"]),
     ...mapActions("home", [
-      "setUserInfo",
+      "getUserInfo",
+      "severUserInfo",
       "reclassify",
       "setEmail",
       "checkCodeAdd",
@@ -219,12 +202,16 @@ export default {
     async _getUserInfo() {
       this.userData = await this.getUserInfo();
     },
-    // 上传头像
-    async _uploadImg({ file, onError, onSuccess }) {
-      // 可以判断图片大小限定
-      await this.imageAvatarUpload({ file, type: 10 });
-      this._getUserInfo();
+    // 修改头像
+    async closeAvatarShow(data) {
+      if (data) {
+        showLoading("上传中。。。");
+        await this.imageAvatarUpload({ file: data, type: "avatar" });
+        this._getUserInfo();
+      }
+      this.avatarShow = false;
     },
+
     checkCode(title, phone) {
       this.contact.dialog = true;
       this.contact.phone = phone;
@@ -234,23 +221,15 @@ export default {
     },
     // 获取验证码
     setCode() {
-      this.$refs.ruleForm2.validate((valid, error) => {
+      this.$refs.ruleForm2.validate(async (valid, error) => {
         if (!valid) return false;
-        this.contact.time = 60;
-        this.mySetTimeout();
         if (this.contact.phone) {
-          setTimeout(() => {
-            this.$notify({
-              title: "手机验证码",
-              message: "未开通短信业务，验证码可随意填写",
-              offset: 100,
-            });
-          }, 2000);
+          return showError("暂未开放");
         } else {
           // 发邮件
-          setTimeout(() => {
-            this.setEmail({ email: this.contact.content });
-          }, 2000);
+          await this.setEmail({ email: this.contact.content });
+          this.contact.time = 60;
+          this.mySetTimeout();
         }
       });
     },
@@ -261,11 +240,9 @@ export default {
           return false;
         }
         showLoading(`正在${this.contact.title}`);
-        let res = await this.checkCodeAdd({ ...this.contact });
-        if (res.type == "success") {
-          this.closeDialog();
-          this._getUserInfo();
-        }
+        await this.checkCodeAdd({ ...this.contact });
+        this.closeDialog();
+        this._getUserInfo();
       });
     },
     mySetTimeout() {
@@ -277,6 +254,7 @@ export default {
       }, 1000);
     },
     closeDialog() {
+      this.$refs.ruleForm2.resetFields();
       this.contact.dialog = false;
       this.contact.content = "";
       this.contact.code = "";
@@ -288,7 +266,11 @@ export default {
           return false;
         }
         showLoading("正在保存");
-        await this.setUserInfo({ ...this.userData });
+        await this.severUserInfo({
+          id: this.userData.id,
+          introduction: this.userData.introduction,
+          nickName: this.userData.nickName,
+        });
         this._getUserInfo();
       });
     },
@@ -337,9 +319,9 @@ export default {
       }
     }
   }
-  .userRoles{
-    >span:not(:last-child)::after{
-      content: '，';
+  .userRoles {
+    > span:not(:last-child)::after {
+      content: "，";
       display: inline-block;
     }
   }

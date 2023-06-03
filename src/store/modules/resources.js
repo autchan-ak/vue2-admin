@@ -1,12 +1,19 @@
-import Request from '@/request'
+import Request from '@/request/request.js'
 import { showError } from "@/utils";
+import { isArray } from "@/utils/BaseUtil"
 
 const mutations = {
 };
 
-const upload = async (url, { file, type }, rootGetters) => {
+const upload = async (url, { file, type = "" }) => {
     const formData = new FormData();
-    formData.append('file', file);
+    if (isArray(file)) {
+        file.forEach(el => {
+            formData.append('file', el);
+        });
+    } else {
+        formData.append('file', file);
+    }
     formData.append('module', type);
     return Request.post(url, formData)
 };
@@ -16,14 +23,23 @@ const actions = {
     /**
      * 上传用户头像图片
      */
-    imageAvatarUpload({ rootGetters }, params = {}) {
-        return upload('/upload/image/user/avatar', params, rootGetters)
+    imageAvatarUpload({ }, params) {
+        return upload('/private/users/upload', params)
+    },
+    goodsUpload({ }, params) {
+        return upload('/private/goods/upload', params)
     },
     /**
-     * 上传图片
+     * 上传文件
      */
-    imageUpload({ rootGetters }, params = {}) {
-        return upload(`/upload/image${params.renam ? '/renam' : ''}`, params, rootGetters)
+    fileUpload({ }, params = {}) {
+        return upload(`/private/files/create`, params)
+    },
+    /**
+     * 公用的上传
+     */
+    noticeUpload({ }, params) {
+        return upload(`/private/upload`, params)
     },
     /**
      * module 来区分上传类型
@@ -50,12 +66,6 @@ const actions = {
             console.error('上传类型错误!,仅支持：' + accept.join('，'));
             return showError('上传类型错误!,仅支持：' + accept.join('，'))
         }
-    },
-    /**
-     * 聊天上传
-     */
-    chatUpload({ rootGetters }, params = {}) {
-        return upload(`/upload/chat`, params, rootGetters)
     },
 }
 

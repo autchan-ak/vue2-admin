@@ -1,19 +1,19 @@
 <!-- 角色管理 -->
 <template>
-  <div>
+  <div class="table-page">
     <!-- 搜索 -->
     <div class="queryInfo">
-      <el-row :gutter="20" class="">
+      <el-row :gutter="20">
         <el-col :sm="8" :md="6" :lg="4">
           <el-input
-            v-model="queryInfo.name"
+            v-model="queryInfo.params.role_name"
             size="small"
             placeholder="请输入角色名称"
           ></el-input>
         </el-col>
         <el-col :sm="8" :md="6">
           <el-date-picker
-            v-model="queryInfo.time"
+            v-model="queryInfo.params.createdAt"
             type="daterange"
             size="small"
             :clearable="false"
@@ -26,7 +26,11 @@
           </el-date-picker>
         </el-col>
         <el-col :span="2" :xs="4">
-          <el-button type="primary" size="small" @click="seach_query()"
+          <el-button
+            v-permission="'query'"
+            type="primary"
+            size="small"
+            @click="seach_query()"
             >搜索</el-button
           >
         </el-col>
@@ -39,6 +43,7 @@
       <!-- 按钮组 -->
       <div class="button_group">
         <el-button
+          v-permission="'add'"
           type="primary"
           icon="el-icon-plus"
           size="small"
@@ -46,6 +51,7 @@
           >新增</el-button
         >
         <el-button
+          v-permission="'update'"
           type="warning"
           icon="el-icon-edit"
           size="small"
@@ -53,6 +59,7 @@
           >修改</el-button
         >
         <el-button
+          v-permission="'delete'"
           type="danger"
           icon="el-icon-delete"
           size="small"
@@ -67,16 +74,16 @@
         :data="tableData"
         @selection-change="selectionChange"
       >
-        <el-table-column type="selection" width="55" :selectable="selectable" />
-        <el-table-column prop="roles_title" label="角色名称" />
-        <el-table-column prop="roles_code" label="角色标识" />
+        <el-table-column type="selection" width="55" />
+        <el-table-column prop="role_name" label="角色名称" show-overflow-tooltip />
+        <el-table-column prop="role_desc" label="角色描述" show-overflow-tooltip />
         <el-table-column label="角色状态" width="100" align="center">
           <template v-slot="{ row }">
             <el-switch
-              v-model="row.ena"
-              :disabled="row.id <= 2"
+              v-model="row.state"
               @change="changeEna(row)"
-              :active-value="0"
+              :active-value="false"
+              :inactive-value="true"
               active-color="#13ce66"
               inactive-color="#ff4949"
             />
@@ -84,13 +91,18 @@
         </el-table-column>
         <el-table-column label="创建时间">
           <template v-slot="{ row }">
-            {{ row.createTime | dateFormat }}
+            {{ row.createdAt | dateFormat }}
           </template>
         </el-table-column>
-        <el-table-column label="角色描述" prop="roles_desc" />
+        <el-table-column label="修改时间">
+          <template v-slot="{ row }">
+            {{ row.updatedAt | dateFormat }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="155">
           <template v-slot="{ row }">
             <el-button
+              v-permission="'update'"
               type="text"
               size="mini"
               class="textyell"
@@ -98,24 +110,21 @@
               >修改</el-button
             >
             <el-button
+              v-permission="'delete'"
               type="text"
               size="mini"
               class="textRed"
-              :disabled="row.id <= 2"
               @click="remove(row.id)"
               >删除</el-button
             >
-            <el-dropdown style="margin-left: 10px" @command="handleCommand">
-              <el-button type="text" size="mini"
-                >更多操作<i class="el-icon-arrow-down"
-              /></el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  :command="beforeHandleCommand(row, 'editJurisdiction')"
-                  >修改权限</el-dropdown-item
-                >
-              </el-dropdown-menu>
-            </el-dropdown>
+            <el-button
+              v-permission="'update:role'"
+              type="text"
+              size="mini"
+              class="textym"
+              @click="handleCommand(row)"
+              >修改权限</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -124,9 +133,9 @@
         hide-on-single-page
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="page"
-        :page-sizes="[10, 20, 30]"
-        :page-size="limit"
+        :current-page="queryInfo.offset"
+        :page-sizes="[15, 20, 30]"
+        :page-size="queryInfo.limit"
         layout="sizes, prev, pager, next,total"
         :total="total"
       />
@@ -144,23 +153,17 @@
         ref="addFormData"
         label-width="80px"
       >
-        <el-form-item label="角色名称" prop="roles_title">
-          <el-input v-model="addFormData.roles_title" />
+        <el-form-item label="角色名称" prop="role_name">
+          <el-input v-model="addFormData.role_name" />
         </el-form-item>
-        <el-form-item label="角色标识" prop="roles_code">
-          <el-input v-model="addFormData.roles_code" />
+        <el-form-item label="角色描述" prop="role_desc">
+          <el-input type="textarea" rows="3" v-model="addFormData.role_desc" />
         </el-form-item>
         <el-form-item label="角色状态">
-          <el-select
-            v-model="addFormData.ena"
-            :disabled="addFormData.id && addFormData.id <= 2"
-          >
-            <el-option label="启用" :value="0" />
-            <el-option label="禁用" :value="1" />
+          <el-select v-model="addFormData.state">
+            <el-option label="启用" :value="false" />
+            <el-option label="禁用" :value="true" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="角色描述" prop="roles_desc">
-          <el-input type="textarea" rows="3" v-model="addFormData.roles_desc" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -172,7 +175,7 @@
     <role-permissions
       v-if="rolePermissions"
       :show="rolePermissions"
-      :id="roleId"
+      :row="roleRow"
       :title="title"
       @_close="handleClose"
     />
@@ -188,8 +191,6 @@ export default {
   data() {
     return {
       total: 0,
-      limit: 10,
-      page: 1,
       pickerOptions: {
         disabledDate(time) {
           //   return time.getTime() > Date.now() - 8.64e7;  // 今天不可选
@@ -201,18 +202,21 @@ export default {
         show: false,
       },
       queryInfo: {
-        time: "",
+        params: {},
+        limit: 15,
+        offset: 1,
+        sort: { prop: "createdAt", order: "desc" },
       },
       tableData: [],
       check: [],
       addFormData: {
-        ena: 1,
+        state: false,
       },
       formRules: {
-        roles_code: [
-          { required: true, message: "请输入角色标识", trigger: "blur" },
+        role_desc: [
+          { required: true, message: "请输入角色描述", trigger: "blur" },
         ],
-        roles_title: [
+        role_name: [
           { required: true, message: "请输入角色名称", trigger: "blur" },
         ],
       },
@@ -220,6 +224,7 @@ export default {
       roleId: null,
       rolePermissions: false,
       title: "",
+      roleRow: null,
     };
   },
   computed: {},
@@ -231,21 +236,21 @@ export default {
     ...mapActions("system", [
       "rolesList",
       "setEna",
-      "rolesPreservation",
+      "rolesSeve",
       "rolesRome",
     ]),
     async seach_query() {
       showLoading("加载中");
-      if (this.queryInfo.time) {
-        this.queryInfo.endTime = this.$dateFormat(
-          this.queryInfo.time[1]
+      if (this.queryInfo.params.createdAt) {
+        this.queryInfo.params.createdAt[1] = this.$dateFormat(
+          this.queryInfo.params.createdAt[1]
         ).replace(/00:00:00/, "23:59:59");
-        this.queryInfo.startTime = this.$dateFormat(this.queryInfo.time[0]);
+        this.queryInfo.params.createdAt[0] = this.$dateFormat(
+          this.queryInfo.params.createdAt[0]
+        );
       }
       let res = await this.rolesList({
         ...this.queryInfo,
-        limit: this.limit,
-        page: this.page,
       });
       this.tableData = res.data;
       this.total = res.count;
@@ -259,11 +264,6 @@ export default {
     selectionChange(val) {
       this.check = [...val];
     },
-    // 禁用某一行选中
-    selectable(row) {
-      if (row.id > 2) return true;
-      return false;
-    },
     // 新增
     showDialogAdd(row) {
       if (row) {
@@ -271,7 +271,7 @@ export default {
         this.dialog.title = "修改";
       } else {
         this.dialog.title = "新增";
-        this.addFormData.ena = 0;
+        this.addFormData.state = false;
       }
       this.dialog.show = true;
     },
@@ -288,20 +288,15 @@ export default {
           return false;
         }
         showLoading(true);
-        await this.rolesPreservation(this.addFormData);
+        await this.rolesSeve(this.addFormData);
         this.handleClose();
       });
     },
     // 更多
     handleCommand(obj) {
-      this.roleId = obj.row.id;
-      this.title = `（${obj.row.roles_title}）`;
-      switch (obj.command) {
-        case "editJurisdiction":
-          this.title += "菜单权限";
-          this.rolePermissions = true;
-          break;
-      }
+      this.roleRow = obj;
+      this.title = `（${obj.role_name}）角色权限`;
+      this.rolePermissions = true;
     },
     // 禁用启用
     async changeEna(row) {
@@ -325,7 +320,12 @@ export default {
       });
     },
     reset_query() {
-      this.queryInfo = {};
+      this.queryInfo = {
+        params: {},
+        limit: 15,
+        offset: 1,
+        sort: { prop: "createdAt", order: "desc" },
+      };
     },
     handleClose() {
       this.dialog.show = false;

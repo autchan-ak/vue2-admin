@@ -41,12 +41,12 @@ const mutations = {
 const actions = {
     // 用户登录
     login({ commit, dispatch }, userInfo) {
-        const { username, password } = userInfo
+        const { account, password } = userInfo
         return new Promise((resolve, reject) => {
             Request({
                 url: '/user/login',
                 method: 'post',
-                data: { username: username.trim(), password: BASE64Helper.encode(password) }
+                data: { username: account.trim(), password: BASE64Helper.encode(password) }
             }).then(async res => {
                 // 保存状态
                 commit('SAVE_AUTHEN_INFO', res.data);

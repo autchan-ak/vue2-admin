@@ -101,3 +101,10 @@ input[type='number'] {
     color: unset !important;
   }
 }
+
+.el-scrollbar__wrap {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0 !important;
+  }
+}

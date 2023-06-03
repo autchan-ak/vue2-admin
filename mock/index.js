@@ -4,11 +4,35 @@ const { param2Obj } = require('./utils')
 const user = require('./user')
 const role = require('./role')
 const article = require('./article')
+const system = require('./system')
 
 const mocks = [
   ...user,
   ...role,
   ...article,
+  ...system,
+
+
+  {
+    url: '/*',
+    type: 'post',
+    response: _ => {
+      return {
+        meta: { status: 201 ,type:"error", msg: "抱歉您没有权限！请联系管理员"},
+        data:null,
+      }
+    }
+  },
+  {
+    url: '/*',
+    type: 'get',
+    response: _ => {
+      return {
+        meta: { status: 201 ,type:"error", msg: "抱歉您没有权限！请联系管理员"},
+        data:null,
+      }
+    }
+  },
 ]
 
 // for front mock
@@ -17,12 +41,11 @@ const mocks = [
 function mockXHR() {
   // mock patch
   // https://github.com/nuysoft/Mock/issues/300
-  Mock.setup({timeout: 500})
+  // Mock.setup({timeout: 500})
   Mock.XHR.prototype.proxy_send = Mock.XHR.prototype.send
   Mock.XHR.prototype.send = function() {
     if (this.custom.xhr) {
       this.custom.xhr.withCredentials = this.withCredentials || false
-
       if (this.responseType) {
         this.custom.xhr.responseType = this.responseType
       }

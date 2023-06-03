@@ -28,9 +28,9 @@
           ref="loginForm"
           class="demo-ruleForm"
         >
-          <el-form-item prop="username">
+          <el-form-item prop="account">
             <el-input
-              v-model="loginForm.username"
+              v-model="loginForm.account"
               placeholder="请输入用户名"
               size="medium"
             >
@@ -77,12 +77,12 @@ export default {
       pwdShow: false,
       loginForm: {
         // 登陆表单
-        username: "",
+        account: "",
         password: "",
       },
       rules: {
         //登陆验证规则
-        username: [
+        account: [
           { required: true, message: "请输入用户名", trigger: "blur" },
           {
             min: 2,

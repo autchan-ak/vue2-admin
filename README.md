@@ -43,10 +43,8 @@ el 图标也可传入
 ```
 
 ### 默认启动为mock
-- 账号：admin  || autchan  || test
-- 密码：随意
-- （三个账号都一样）
-
+- 账号：admin || test
+- 密码：123456
 ### 项目截图
 
 <img src="src/assets/image/项目截图1.png" alt="项目截图" width="45%"><img src="src/assets/image/项目截图5.png" alt="项目截图" width="45%" >

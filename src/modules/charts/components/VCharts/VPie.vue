@@ -5,7 +5,7 @@
       <span class="box_card_title">实心饼图</span>
       <el-row :gutter="20">
         <div class="right">
-          <el-button-group style="height:20px">
+          <el-button-group style="height: 20px">
             <el-button
               :type="index == 0 ? 'primary' : ''"
               size="mini"
@@ -27,7 +27,12 @@
           </el-button-group>
         </div>
         <div class="mg-top">
-          <ve-pie v-if="index==0" height="350px" :data="chartData[index]" :settings="{roseType: 'area'}"></ve-pie>
+          <ve-pie
+            v-if="index == 0"
+            height="350px"
+            :data="chartData[index]"
+            :settings="{ roseType: 'area' }"
+          ></ve-pie>
           <ve-pie v-else-if="index==1" height="350px" :data="chartData[index]" :settings="{roseType: 'radius'}"></ve-pie>
           <ve-pie v-else height="350px" :data="chartData[index]" ></ve-pie>
         </div>
@@ -73,14 +78,14 @@ export default {
   },
   mounted() {
     // 图表数据变化后视图没更新可用一下方法
-    setTimeout(()=>{
-      this.chartData[0].rows[2].proportion = 80
-      var temp = this.chartData[0].rows
-      this.chartData[0].rows = []
-      this.$nextTick(()=>{
-        this.chartData[0].rows = temp
-      })
-    },5000)
+    setTimeout(() => {
+      this.chartData[0].rows[2].proportion = 80;
+      var temp = this.chartData[0].rows;
+      this.chartData[0].rows = [];
+      this.$nextTick(() => {
+        this.chartData[0].rows = temp;
+      });
+    }, 5000);
   },
   methods: {
     showData(i) {
