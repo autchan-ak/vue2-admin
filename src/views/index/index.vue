@@ -13,9 +13,15 @@
               <div>
                 <span>{{ getTimeState }}</span>
                 <span>{{ userInfo.uname }}</span>
-                <span>{{greetings}}</span>
+                <span>{{ greetings }}</span>
               </div>
-              <!-- <p>今天小雨转阴天,21~27°,天凉,注意加衣</p> -->
+              <iframe
+                id="tianqi"
+                src="http://i.tianqi.com/?c=code&id=1"
+                width="375"
+                height="30"
+                frameborder="0"
+              />
             </div>
           </div>
         </el-col>
@@ -171,8 +177,8 @@ export default {
         state = `中午好!`;
         this.greetings = "休息一下吧！";
       } else if (hours > 14 && hours <= 18) {
-          state = `下午好!`;
-          this.greetings = "我猜你需要来一杯下午茶";
+        state = `下午好!`;
+        this.greetings = "我猜你需要来一杯下午茶";
       } else if (hours > 18 && hours <= 24) {
         state = `晚上好!`;
         this.greetings = "早点休息哦";

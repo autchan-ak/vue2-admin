@@ -28,13 +28,5 @@ export default
                     icon: 'el-icon-message',
                 }
             },
-            {
-                path: 'map',
-                component: () => import('./map/index.vue'),
-                meta:{
-                    title: "地图",
-                    icon:"el-icon-map-location"
-                }
-            },
         ]
     }
