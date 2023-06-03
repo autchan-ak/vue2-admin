@@ -26,7 +26,6 @@ const storeMessage = {
 Request.interceptors.response.use(response => {
     const res = response.data;
     hideLoading()
-    console.log("响应处理",res.data);
     // 返回流数据
     if (response.headers['content-type'] && response.headers['content-type'].search('application/octet-stream') !== -1) return res
     // 成功 不弹窗
