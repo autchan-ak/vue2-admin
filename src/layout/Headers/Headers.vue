@@ -127,7 +127,7 @@ export default {
   computed: {
     ...mapState("user", ["userInfo"]),
     ...mapState("theme", ["showSidebar"]),
-    ...mapState("permission", ["addRoutes"]),
+    ...mapState("permission", ["routes"]),
   },
   methods: {
     ...mapActions("user", ["resetToken"]),
@@ -137,7 +137,7 @@ export default {
       this.search = !this.search;
       if (this.search) {
         this.restaurants = [];
-        this.loadAll(this.addRoutes);
+        this.loadAll(this.routes);
         this.$refs.showSearch.focus();
       }
     },
