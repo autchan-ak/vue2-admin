@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-    publicPath: "/",
+    publicPath: "./",
     // 关闭线上源码
     productionSourceMap: false,
     devServer: {
