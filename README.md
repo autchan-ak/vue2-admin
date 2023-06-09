@@ -7,7 +7,6 @@ vue2 后台管理系统模板
 
 [github预览地址：](https://autchan-ak.github.io/vue2-admin.github.io/)https://autchan-ak.github.io/vue2-admin.github.io/
 
-
 本项目可作为模板进行二次开发，基础功能均可以直接复用。
 
 - 项目技术栈基于 `ES2015+、vue、vuex、vue-router 、vue-cli 、axios`；
@@ -52,10 +51,10 @@ el 图标也可传入
 - 密码：123456
 ### 项目截图
 
-<img src="src/assets/image/项目截图1.png" alt="项目截图" width="45%"><img src="src/assets/image/项目截图5.png" alt="项目截图" width="45%" >
-<img src="src/assets/image/项目截图3.png" alt="项目截图" width="45%" ><img src="src/assets/image/项目截图4.png" alt="项目截图" width="45%" >
-<img src="src/assets/image/项目截图2.png" alt="项目截图" width="45%" ><img src="src/assets/image/项目截图7.png" alt="项目截图" width="45%" >
-<img src="src/assets/image/项目截图6.png" alt="项目截图" width="45%" ><img src="src/assets/image/项目截图8.png" alt="项目截图" width="45%" >
+<img src="image/项目截图1.png" alt="项目截图" width="45%"><img src="image/项目截图5.png" alt="项目截图" width="45%" >
+<img src="image/项目截图3.png" alt="项目截图" width="45%" ><img src="image/项目截图4.png" alt="项目截图" width="45%" >
+<img src="image/项目截图2.png" alt="项目截图" width="45%" ><img src="image/项目截图7.png" alt="项目截图" width="45%" >
+<img src="image/项目截图6.png" alt="项目截图" width="45%" ><img src="image/项目截图8.png" alt="项目截图" width="45%" >
 
 
 
@@ -134,4 +133,4 @@ el 图标也可传入
 - 如果有意见和问题 请在 lssues提出，我看到后会解答。
 - 作者公众号
 
-<img src="src/assets/image/公众号.png" alt="公众号" width="60%" >
+<img src="image/公众号.png" alt="公众号" width="60%" >
