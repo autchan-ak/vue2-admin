@@ -7,6 +7,9 @@ vue2 后台管理系统模板
 
 [github预览地址：](https://autchan-ak.github.io/vue2-admin.github.io/)https://autchan-ak.github.io/vue2-admin.github.io/
 
+[gitee预览地址：](http://todpole.gitee.io/vue2-admin/)http://todpole.gitee.io/vue2-admin
+
+
 本项目可作为模板进行二次开发，基础功能均可以直接复用。
 
 - 项目技术栈基于 `ES2015+、vue、vuex、vue-router 、vue-cli 、axios`；
