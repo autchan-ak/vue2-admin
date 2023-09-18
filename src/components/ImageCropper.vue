@@ -63,6 +63,7 @@
 
 <script>
 import { VueCropper } from "vue-cropper";
+import { showError } from "@/utils";
 export default {
   components: {
     VueCropper,
@@ -104,22 +105,8 @@ export default {
       const isIMAGE =
         file.raw.type === "image/jpeg" || file.raw.type === "image/png";
       const isLt5M = file.raw.size / 1024 / 1024 < 5;
-      if (!isIMAGE) {
-        this.$message({
-          showClose: true,
-          message: "请选择 jpg、png 格式的图片",
-          type: "warning",
-        });
-        return false;
-      }
-      if (!isLt5M) {
-        this.$message({
-          showClose: true,
-          message: "图片大小不能超过 5MB",
-          type: "warning",
-        });
-        return false;
-      }
+      if (!isIMAGE) return showError("请选择 jpg、png 格式的图片");
+      if (!isLt5M) return showError("图片大小不能超过 5MB");
       let reader = new FileReader();
       reader.readAsDataURL(file.raw);
       reader.onload = (e) => {

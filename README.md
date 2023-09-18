@@ -36,7 +36,23 @@ npm run serve
 ```
 npm run build
 ```
+### md编辑器
+- 支持参数：
 
+| 属性名 | 类型 | 默认值 | 说明 |
+|--|--|--|--|
+| height | Number | 500 | 编辑器高度(px) |
+| placeholder | String\|String | 请输入内容 | 编辑器提示语 |
+| mdContent | String |  | 编辑器内容 <br> v-model绑定|
+| mode | String | editable | edit (纯编辑模式) <br> editable (编辑与预览模式) <br> preview (纯预览模式)| |
+ 
+```html
+  <!-- 查看 -->
+  <MdEditor v-model="content" mode="preview" />
+  <!-- 编辑 -->
+  <MdEditor v-model="content" />
+
+```
 
 ### SVG使用
 将 svg 保存在 `/src/assets/icon`

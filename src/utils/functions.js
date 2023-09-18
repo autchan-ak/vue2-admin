@@ -257,31 +257,6 @@ export function getSelection() {
 }
 
 /**
- * 剪贴板复制功能
- *
- * @param {String} value 复制内容
- * @param {Function} callback 复制成功回调方法
- */
-export const copyTextToClipboard = (value, callback) => {
-  let textArea = document.createElement('textarea')
-  textArea.style.background = 'transparent'
-  textArea.value = value
-
-  document.body.appendChild(textArea)
-
-  textArea.select()
-
-  try {
-    document.execCommand('copy')
-    if (callback) callback()
-  } catch (err) {
-    alert('Oops, unable to copy')
-  }
-
-  document.body.removeChild(textArea)
-}
-
-/**
  * 隐藏用户手机号中间四位
  *
  * @param {String} phone  手机号

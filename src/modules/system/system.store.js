@@ -146,6 +146,35 @@ export default {
                     return Promise.reject(err);
                 });
         },
-
+        // 文件列表
+        fileList({ }, reqData) {
+            return Request.post("/system/files/list", reqData)
+                .then(res => {
+                    return Promise.resolve(res.data);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        },
+        // 删除文件
+        flieRome({ }, reqData) {
+            return Request.post("/system/files/delete", reqData)
+                .then(res => {
+                    return Promise.resolve(res);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        },
+        // 文件下载
+        fileDownload({ }, name) {
+            return Request.get(`/system/files/findOne?id=${name}`, { responseType: 'arraybuffer' })
+                .then(res => {
+                    return Promise.resolve(res);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        },
     }
 }

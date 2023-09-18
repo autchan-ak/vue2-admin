@@ -19,5 +19,12 @@ export default {
                 title: "电子签名",
             }
         },
+        {
+            path: 'md',
+            component: () => import('./md.vue'),
+            meta: {
+                title: "md编辑器",
+            }
+        },
     ]
 }

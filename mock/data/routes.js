@@ -136,6 +136,21 @@ export const RoutesList = [
         "updatedAt": "2023-04-20T11:05:30.000Z"
     },
     {
+        "id": 18,
+        "pid": 12,
+        "path": "system/file",
+        "title": "文件管理",
+        "icon": "el-icon-user",
+        "lever": 2,
+        "orderNum": 4,
+        "isHidden": false,
+        "state": false,
+        "menu_desc": "",
+        "authority": "",
+        "createdAt": "2022-04-26T06:16:10.000Z",
+        "updatedAt": "2023-04-29T03:16:57.000Z"
+    },
+    {
         "id": 14,
         "pid": 12,
         "path": "system/userManage",
@@ -425,6 +440,21 @@ export const RoutesList = [
         "pid": 60,
         "path": "/case/sign",
         "title": "电子签名",
+        "icon": "el-icon-coordinate",
+        "lever": 2,
+        "orderNum": 0,
+        "isHidden": false,
+        "state": false,
+        "menu_desc": "",
+        "authority": "",
+        "createdAt": "2022-04-26T06:15:37.000Z",
+        "updatedAt": "2023-04-29T03:12:24.000Z"
+    },
+    {
+        "id": 603,
+        "pid": 60,
+        "path": "/case/md",
+        "title": "md编辑器",
         "icon": "el-icon-coordinate",
         "lever": 2,
         "orderNum": 0,
