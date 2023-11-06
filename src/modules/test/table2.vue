@@ -1,4 +1,4 @@
-<!-- 角色管理 -->
+<!-- 表格页模板 -->
 <template>
   <div class="table-page">
     <!-- 搜索 -->
@@ -6,14 +6,26 @@
       <el-row :gutter="20">
         <el-col :sm="8" :md="6" :lg="4">
           <el-input
-            v-model="queryInfo.params.role_name"
+            v-model="queryInfo.params.name"
             size="small"
-            placeholder="请输入角色名称"
-          ></el-input>
+            placeholder="请输入名称"
+          />
+        </el-col>
+        <el-col :sm="8" :md="6" :lg="4">
+          <el-select
+            v-model="queryInfo.params.select"
+            size="small"
+            clearable
+            placeholder="请选择"
+          >
+            <el-option label="选项1" value="1" />
+            <el-option label="选项2" value="2" />
+            <el-option label="选项3" value="3" />
+          </el-select>
         </el-col>
         <el-col :sm="8" :md="6">
           <el-date-picker
-            v-model="queryInfo.params.createdAt"
+            v-model="queryInfo.params.time"
             type="daterange"
             size="small"
             :clearable="false"
@@ -39,17 +51,27 @@
         </el-col>
       </el-row>
     </div>
-    <div class="main_list">
-      <!-- 按钮组 -->
-      <div class="button_group">
+    <ScreenTable
+      :list="showlist"
+      :table="tableData"
+      :current-page="queryInfo.offset"
+      :pageSize="queryInfo.limit"
+      :max-height="600"
+      :border="true"
+      :total="total"
+      :selection="true"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+      @selectionChange="selectionChange"
+    >
+      <div slot="btns">
         <el-button
-          v-permission="'add'"
           type="primary"
-          icon="el-icon-plus"
+          icon="el-icon-export"
           size="small"
-          @click="showDialogAdd(0)"
-          >新增</el-button
-        >
+          @click="groupAdd(0)"
+          >新增
+        </el-button>
         <el-button
           v-permission="'update'"
           type="warning"
@@ -67,46 +89,28 @@
           >删除</el-button
         >
       </div>
-      <el-table
-        border
-        size="small"
-        row-key="id"
-        :data="tableData"
-        @selection-change="selectionChange"
-      >
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="role_name" label="角色名称" show-overflow-tooltip />
-        <el-table-column prop="role_desc" label="角色描述" show-overflow-tooltip />
+      <div slot="state">
         <el-table-column label="角色状态" width="100" align="center">
           <template v-slot="{ row }">
             <el-switch
               v-model="row.state"
               @change="changeEna(row)"
               :active-value="false"
-              :inactive-value="true"
               active-color="#13ce66"
               inactive-color="#ff4949"
             />
           </template>
         </el-table-column>
-        <el-table-column label="创建时间">
-          <template v-slot="{ row }">
-            {{ row.createdAt | dateFormat }}
-          </template>
-        </el-table-column>
-        <el-table-column label="修改时间">
-          <template v-slot="{ row }">
-            {{ row.updatedAt | dateFormat }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="155">
+      </div>
+      <div slot="operate">
+        <el-table-column label="操作" width="100" align="center">
           <template v-slot="{ row }">
             <el-button
               v-permission="'update'"
               type="text"
               size="mini"
               class="textyell"
-              @click="showDialogAdd(row)"
+              @click="groupAdd(row)"
               >修改</el-button
             >
             <el-button
@@ -117,28 +121,16 @@
               @click="remove(row.id)"
               >删除</el-button
             >
-
           </template>
         </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination
-        hide-on-single-page
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="queryInfo.offset"
-        :page-sizes="[15, 20, 30]"
-        :page-size="queryInfo.limit"
-        layout="sizes, prev, pager, next,total"
-        :total="total"
-      />
-    </div>
+      </div>
+    </ScreenTable>
     <!-- 新增修改 -->
     <el-dialog
       :title="dialog.title"
       :visible.sync="dialog.show"
       width="30%"
-      :before-close="handleClose"
+      :before-close="dialogClose"
     >
       <el-form
         :model="addFormData"
@@ -146,31 +138,32 @@
         ref="addFormData"
         label-width="80px"
       >
-        <el-form-item label="角色名称" prop="role_name">
-          <el-input v-model="addFormData.role_name" />
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="addFormData.title" />
         </el-form-item>
-        <el-form-item label="角色描述" prop="role_desc">
-          <el-input type="textarea" rows="3" v-model="addFormData.role_desc" />
+        <el-form-item label="名字" prop="name">
+          <el-input v-model="addFormData.name" />
         </el-form-item>
-        <el-form-item label="角色状态">
-          <el-select v-model="addFormData.state">
-            <el-option label="启用" :value="false" />
-            <el-option label="禁用" :value="true" />
+        <el-form-item label="选项">
+          <el-select v-model="addFormData.select">
+            <el-option label="选项1" :value="0" />
+            <el-option label="选项2" :value="1" />
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="sever_Role">确 定</el-button>
+        <el-button @click="dialogClose">取 消</el-button>
+        <el-button type="primary" @click="severDialog">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import { showLoading, confirm, showError } from "@/utils";
 export default {
+  components: {},
   data() {
     return {
       total: 0,
@@ -190,93 +183,73 @@ export default {
         offset: 1,
         sort: { prop: "createdAt", order: "desc" },
       },
+      showlist:[
+        {label:"角色名称",prop:"role_name",width:"100"},
+        {label:"角色描述",prop:"role_desc",showOverflowTooltip:true},
+        {label:"角色状态",slot:"state"},
+        {label:"创建时间",prop:"createdAt",isTime:true,timeFormat:"YYYY-MM-DD"},
+        {label:"修改时间",prop:"updatedAt",isTime:true},
+        {label:"操作",slot:"operate"}
+      ],
       tableData: [],
       check: [],
-      addFormData: {
-        state: false,
-      },
+      addFormData: {},
       formRules: {
-        role_desc: [
-          { required: true, message: "请输入角色描述", trigger: "blur" },
-        ],
-        role_name: [
-          { required: true, message: "请输入角色名称", trigger: "blur" },
-        ],
+        name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
       },
-      dialogVisible: false,
-      roleId: null,
-      rolePermissions: false,
-      title: "",
-      roleRow: null,
     };
   },
-  computed: {},
+  computed: {
+    // ...mapState("", [""]),
+  },
   mounted() {
     this.seach_query();
   },
 
   methods: {
-    ...mapActions("system", [
+     ...mapActions("system", [
       "rolesList",
       "setEna",
       "rolesSeve",
       "rolesRome",
     ]),
+    // 搜索
     async seach_query() {
       showLoading("加载中");
-      if (this.queryInfo.params.createdAt) {
-        this.queryInfo.params.createdAt[1] = this.$dateFormat(
-          this.queryInfo.params.createdAt[1]
+      if (this.queryInfo.params.time) {
+        this.queryInfo.params.endTime = this.$dateFormat(
+          this.queryInfo.params.time[1]
         ).replace(/00:00:00/, "23:59:59");
-        this.queryInfo.params.createdAt[0] = this.$dateFormat(
-          this.queryInfo.params.createdAt[0]
+        this.queryInfo.params.startTime = this.$dateFormat(
+          this.queryInfo.params.time[0]
         );
       }
       let res = await this.rolesList({
         ...this.queryInfo,
       });
-      this.tableData = res.data;
-      this.total = res.count;
+      this.tableData = [...res.data,...res.data,...res.data,...res.data,...res.data];
+      this.total = 27;
     },
-    selectionChange(val) {
-      this.check = [...val];
-    },
-    // 新增
-    showDialogAdd(row) {
+    // 新增修改
+    groupAdd(row) {
       if (row) {
         this.addFormData = { ...row };
         this.dialog.title = "修改";
       } else {
         this.dialog.title = "新增";
-        this.addFormData.state = false;
+        this.addFormData.ena = 0;
       }
       this.dialog.show = true;
     },
+    // 修改
     editRole() {
-      if (this.check.length != 1) return showError("请选择一条要修改的角色");
-      this.dialog.title = "修改";
-      this.addFormData = { ...this.check[0] };
-      this.dialog.show = true;
-    },
-    // 保存
-    sever_Role() {
-      this.$refs["addFormData"].validate(async (valid) => {
-        if (!valid) {
-          return false;
-        }
-        showLoading(true);
-        await this.rolesSeve(this.addFormData);
-        this.handleClose();
-      });
-    },
-    // 禁用启用
-    async changeEna(row) {
-      await this.setEna({ id: row.id });
-      this.seach_query();
+      if (this.check.length != 1) return showError("请选择一条要修改的数据");
+      this.groupAdd(this.check[0]);
     },
     // 删除
     remove(id) {
-      if (!id && !this.check.length) return showError("请选择要删除的角色");
+      if (!id && !this.check.length) return showError("请选择要删除的数据");
       confirm("确认删除", "提示", {
         ok: async () => {
           showLoading("正在删除");
@@ -289,6 +262,20 @@ export default {
         },
       });
     },
+    // 保存
+    severDialog() {
+      this.$refs["addFormData"].validate(async (valid) => {
+        if (!valid) return false;
+        showLoading(true);
+        await this.rolesSeve(this.addFormData);
+        this.dialogClose();
+      });
+    },
+
+    selectionChange(val) {
+      this.check = [...val];
+    },
+
     reset_query() {
       this.queryInfo = {
         params: {},
@@ -297,17 +284,19 @@ export default {
         sort: { prop: "createdAt", order: "desc" },
       };
     },
-    handleClose() {
+    dialogClose() {
       this.dialog.show = false;
-      this.addFormData = { ena: 1 };
-      this.rolePermissions = false;
+      this.addFormData = {};
+      this.$refs["addFormData"].resetFields();
       this.seach_query();
     },
     handleSizeChange(v) {
-      this.limit = v;
+      this.queryInfo.limit = v || this.queryInfo.limit;
+      this.queryInfo.offset = 1;
       this.seach_query();
     },
     handleCurrentChange(v) {
+      this.queryInfo.offset = v;
       this.seach_query();
     },
   },

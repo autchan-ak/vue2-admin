@@ -34,7 +34,7 @@
             v-permission="'query'"
             type="primary"
             size="small"
-            @click="seach_query()"
+            @click="handleSizeChange()"
             >搜索</el-button
           >
         </el-col>
@@ -360,7 +360,7 @@ export default {
       this.seach_query();
     },
     handleSizeChange(v) {
-      this.queryInfo.limit = v;
+      this.queryInfo.limit = v || this.queryInfo.limit;
       this.queryInfo.offset = 1;
       this.seach_query();
     },

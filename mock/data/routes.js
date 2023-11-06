@@ -540,5 +540,20 @@ export const RoutesList = [
         "createdAt": "2022-04-26T06:15:37.000Z",
         "updatedAt": "2023-04-29T03:12:24.000Z"
     },
+    {
+        "id": 621,
+        "pid": 620,
+        "path": "test/table2",
+        "title": "表格页模板2",
+        "icon": "el-icon-coordinate",
+        "lever": 2,
+        "orderNum": 0,
+        "isHidden": false,
+        "state": false,
+        "menu_desc": "",
+        "authority": "",
+        "createdAt": "2022-04-26T06:15:37.000Z",
+        "updatedAt": "2023-04-29T03:12:24.000Z"
+    },
     
 ]

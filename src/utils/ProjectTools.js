@@ -31,7 +31,7 @@ export const getToken = () => {
  * 清除token
  */
 export const removeToken = ()=>{
-    localStorage.clear()
+    // localStorage.clear()
     sessionStorage.clear()
 }
 
@@ -55,4 +55,13 @@ export const loadUserinfo = () => {
         console.error('用户信息加载失败');
         return {}
     }
+}
+
+// 保存 localStorage
+export const setLocalStorage = (key, value) => {
+    localStorage.setItem(key, value)
+}
+// 获取 localStorage
+export const getLocalStorage = key => {
+    return localStorage.getItem(key)
 }
