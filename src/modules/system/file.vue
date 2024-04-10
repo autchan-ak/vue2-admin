@@ -127,15 +127,12 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <el-pagination
-        hide-on-single-page
+      <ak-pagination
+        :total="total"
+        :page-size="queryInfo.limit"
+        :current-page="queryInfo.offset"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="queryInfo.offset"
-        :page-sizes="[10, 20, 30]"
-        :page-size="queryInfo.limit"
-        layout="sizes, prev, pager, next,total"
-        :total="total"
       />
     </div>
     <el-dialog

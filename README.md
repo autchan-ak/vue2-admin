@@ -36,13 +36,15 @@ npm run serve
 ```
 npm run build
 ```
-### md编辑器
+
+### 组件使用
+#### md编辑器
 - 支持参数：
 
 | 属性名 | 类型 | 默认值 | 说明 |
 |--|--|--|--|
 | height | Number | 500 | 编辑器高度(px) |
-| placeholder | String\|String | 请输入内容 | 编辑器提示语 |
+| placeholder | String | 请输入内容 | 编辑器提示语 |
 | mdContent | String |  | 编辑器内容 <br> v-model绑定|
 | mode | String | editable | edit (纯编辑模式) <br> editable (编辑与预览模式) <br> preview (纯预览模式)| |
  
@@ -53,8 +55,97 @@ npm run build
   <MdEditor v-model="content" />
 
 ```
+#### 表格组件
+- 支持动态列，指定列排序`<ScreenTable>`
+- 支持参数：
 
-### SVG使用
+| 属性名 | 类型 | 默认值 | 说明 |
+|--|--|--|--|
+| list | Array |  | 表头数据 |
+| table | Array |  | 表格数据 |
+| current-page | Number | 1 | 分页 |
+| page-size | Number | 15 | 每页条数 | 
+| total | Number | 0 | 总条数 | 
+| handleCurrentChange | Function |  | 改变页码后触发的方法 | 
+| handleSizeChange | Function |  | 改变每页条数后触发的方法 | 
+| tableSort | Function |  | 表格排序后触发的方法 | 
+| btns | Slot |  | 操作按钮区域 | 
+
+-----------------------------------------------------
+- list 参数：
+
+| 属性名 | 类型 | 默认值 | 说明 |
+|--|--|--|--|
+| label | String |  | 表头文字 | 
+| prop | String |  | 对应数据字段 | 
+| showOverflowTooltip | Boolean | false | 是否显示溢出提示 | 
+| width | String / Number |  | 宽度 | 
+| minWidth | String / Number |  | 最小宽度 |
+| align | String | left | 对齐方式 | 
+| type | String |  | 显示类型<br>time:时间格式\|tag:标签格式 | 
+| format | String |  | 时间格式`type`为`time`时生效 | 
+| tag | Object |  | 标签数组`type`为`tag`时生效 |
+| sortable | String |  | 是否可排序 | 
+| sort | String |  | 排序方式`sortable`有值时生效<br>可选值：asc \| desc |
+| slot | Slot |  | 自定义插槽 | 
+
+------------------------------------
+- 标签数组`tag`参数：key为标签的索引，value为标签对象。
+
+| 属性名 | 类型 | 默认值 | 说明 |
+|--|--|--|--|
+| label | String |  | 标签文字 | 
+| type | String |  | 标签类型<br>success \| info \| warning \| danger \| text | 
+| effect | String |  | 标签主题<br>dark \| light \| plain | 
+| size | String |  | 标签大小<br>mini \| small \| medium | 
+
+
+```html
+    <ScreenTable
+        :list="tableList"
+        :table="tableData"
+        :currentPage="page"
+        :pageSize="size"
+        :total="total"
+        @handleCurrentChange="handleCurrentChange"
+        @handleSizeChange="handleSizeChange"
+        @tableSort="tableSort"
+    >
+      <div slot="btns">
+        <el-button type="primary" size="small" @click="add">新增</el-button>
+      </div>
+      <div slot="operate">
+        <el-table-column label="操作" width="100" align="center">
+          <template v-slot="{ row }">
+            <el-button type="text" size="mini" @click="view(row)"
+            >查看</el-button>
+          </template>
+        </el-table-column>
+      </div>
+    </ScreenTable>
+```
+
+
+#### 下拉树形组件
+- 支持参数：
+
+| 属性名 | 类型 | 默认值 | 说明 |
+|--|--|--|--|
+| multiple | Boolean | false | 是否多选 |
+| placeholder | String | 请选择 | 提示语 |
+| clearable | Boolean | false | 是否可以清空选项 |
+| filterable | Boolean | false | 是否可搜索 |
+| disabled | Boolean | false | 是否禁用 |
+| data | Array |  | tree数据 | 
+| nodeKey | String / Number | id | 每个树节点用来作为唯一标识的属性，整棵树应该是唯一的 | 
+| defaultProps | Object | {label: 'label',children: 'children'} |  | 
+| value / v-model | String / Number |  | 绑定值 | 
+| change | Function |  | 改变后触发的方法 | 
+```html
+<select-tree :data="list" v-model="value" @change="handleChange"/>
+```
+
+#### SVG使用
 将 svg 保存在 `/src/assets/icon`
 
 el 图标也可传入
@@ -142,7 +233,6 @@ el 图标也可传入
 ├── README.md
 
 ```
-
 
 ### 最后
 

@@ -52,7 +52,7 @@
       </el-row>
     </div>
     <ScreenTable
-      :list="showlist"
+      :list="tableList"
       :table="tableData"
       :current-page="queryInfo.offset"
       :pageSize="queryInfo.limit"
@@ -63,6 +63,7 @@
       @handleCurrentChange="handleCurrentChange"
       @handleSizeChange="handleSizeChange"
       @selectionChange="selectionChange"
+      @tableSort="tableSort"
     >
       <div slot="btns">
         <el-button
@@ -183,12 +184,16 @@ export default {
         offset: 1,
         sort: { prop: "createdAt", order: "desc" },
       },
-      showlist:[
+      tableList:[
         {label:"角色名称",prop:"role_name",width:"100"},
         {label:"角色描述",prop:"role_desc",showOverflowTooltip:true},
         {label:"角色状态",slot:"state"},
-        {label:"创建时间",prop:"createdAt",isTime:true,timeFormat:"YYYY-MM-DD"},
-        {label:"修改时间",prop:"updatedAt",isTime:true},
+        {label:"角色状态",type: "tag",width:"90", prop:"state",tag:{
+          'true':{label:"禁用",type:'danger',size:'small'},
+          'false':{label:"启用",type:'text'}
+        }},
+        {label:"创建时间",prop:"createdAt",type:"time",timeFormat:"YYYY-MM-DD"},
+        {label:"修改时间",prop:"updatedAt",type:"time",sort:"desc",sortable:"startUpdatedAt"},
         {label:"操作",slot:"operate"}
       ],
       tableData: [],
@@ -298,6 +303,18 @@ export default {
     handleCurrentChange(v) {
       this.queryInfo.offset = v;
       this.seach_query();
+    },
+    tableSort(value,label) {
+      this.queryInfo[label.sortable] = value;
+      this.seach_query();
+      this.tableList.forEach(item=>{
+        if(item.prop===label.prop){
+          item.sort=value;
+        }
+      })
+      this.$nextTick(() => {
+        this.$forceUpdate();
+      });
     },
   },
 };
