@@ -418,7 +418,7 @@ export const openLink = (url, target = '_blank') => {
  * 返回 children：[]
  */
 export const assembleTree = (data, lever = true) => {
-    let { id, fid,order } = { id: 'id', fid: "pid",order:'orderNum' }
+    let { id, fid,order } = { id: 'id', fid: "parentId",order:'orderNum' }
     data = data.sort((a, b) => a[order] - b[order]);
     let obj = {};
     // * 先生成parent建立父子关系
@@ -429,7 +429,7 @@ export const assembleTree = (data, lever = true) => {
     data.forEach((item) => {
         let parent = obj[item[fid]];
         if (parent) {
-            if (item.lever === 3 && lever) {
+            if (item.menuType === 'B' && lever) {
                 // 按钮权限
                 parent.button = parent.button || []
                 parent.button.push(item);
@@ -440,6 +440,7 @@ export const assembleTree = (data, lever = true) => {
             }
 
         } else {
+            if(item.menuType==='B') return
             // * 当前项没有父节点 -> 顶层
             parentList.push(item);
         }

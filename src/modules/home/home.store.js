@@ -2,9 +2,8 @@ import Request from '@/request/request.js'
 
 export default {
     actions: {
-        // 用户信息
-        getUserInfo({ }) {
-            return Request.get("/user/userInfo")
+        getUserInfo({  }) {
+            return Request.get("/private/users/infor")
                 .then(res => {
                     return Promise.resolve(res.data);
                 })
@@ -12,18 +11,8 @@ export default {
                     return Promise.reject(err);
                 });
         },
-        // 修改头像
-        userUpload() {
-            return Request.post("/user/upload")
-                .then(res => {
-                    return Promise.resolve(res.data);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        },
-        severUserInfo({ commit }, reqData) {
-            return Request.post("/user/update", reqData)
+        setUserInfo({ commit }, reqData) {
+            return Request.post("/private/users/save", reqData)
                 .then(res => {
                     return Promise.resolve(res.data);
                 })
@@ -33,7 +22,7 @@ export default {
         },
         // 修改密码
         reclassify({ commit }, reqData) {
-            return Request.post("/user/reclassify", reqData)
+            return Request.post("/private/users/reclassify", reqData)
                 .then(res => {
                     return Promise.resolve(res);
                 })
@@ -42,25 +31,24 @@ export default {
                 });
         },
         // 发送邮件验证码
-        setEmail({ commit }, reqData) {
-            return Request.post("/user/code", reqData)
-                .then(res => {
-                    return Promise.resolve(res.data);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
+        setEmail({commit},reqData){
+            return Request.post("/private/users/code", reqData)
+            .then(res => {
+                return Promise.resolve(res.data);
+            })
+            .catch(err => {
+                return Promise.reject(err);
+            });
         },
         // 校验并修改
-        checkCodeAdd({ }, reqData) {
-            let phone = reqData.phone
-            return Request.post(`/user/${phone ? 'phone' : 'email'}`, reqData)
-                .then(res => {
-                    return Promise.resolve(res);
-                })
-                .catch(err => {
-                    return Promise.reject(err);
-                });
-        }
+        checkCodeAdd({},reqData){
+            return Request.post("/private/users/email", reqData)
+            .then(res => {
+                return Promise.resolve(res);
+            })
+            .catch(err => {
+                return Promise.reject(err);
+            });
+        },
     }
 }

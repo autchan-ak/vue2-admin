@@ -60,7 +60,9 @@ router.beforeEach(async (to, from, next) => {
             } else {
                 Message.error("当前用户没有任何权限，请联系管理员");
                 await store.dispatch('user/resetToken')
-                return 
+                setTimeout(() => {
+                    next(`/login?redirect=${to.path}`)
+                }, 2000)
             }
 
         }
@@ -75,8 +77,10 @@ router.beforeEach(async (to, from, next) => {
         }
     }
 })
-
 router.afterEach(path => {
     document.title = path.meta.title
     NProgress.done()
+    if(!store.state.theme.PC){
+        store.commit("theme/SET_SHOW_SIDEBAR",false);
+    }
 })

@@ -3,17 +3,17 @@
     <!-- 头部 -->
     <div class="index-head">
       <el-row>
-        <el-col :xs="24" :sm="24" :md="14" :lg="12" :xl="12">
+        <el-col :xs="24" :sm="24" :md="14" :lg="16" :xl="16">
           <div class="index-head-left">
             <el-avatar
               class="index-head-left-avatar"
-              :src="userInfo.avatar"
+              :src="$host + userInfo.avatar"
             ></el-avatar>
             <div class="index-head-left-text">
               <div>
                 <span>{{ getTimeState }}</span>
-                <span>{{ userInfo.uname }}</span>
-                <span>{{ greetings }}</span>
+                <span>{{ userInfo.nickName }}，</span>
+                <span>{{ welcome }}</span>
               </div>
               <iframe
                 id="tianqi"
@@ -25,7 +25,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :xs="24" :sm="24" :md="10" :lg="12" :xl="12">
+        <el-col :xs="24" :sm="24" :md="10" :lg="8" :xl="8">
           <div class="index-head-centent-right">
             <div class="index-head-centent-right-list">
               <div class="index-head-centent-right-list-icon">
@@ -151,7 +151,7 @@ import ColleagueBox from "./component/colleague";
 export default {
   data() {
     return {
-      greetings: "祝您新的一天工作愉快",
+      welcome: "祝您新的一天工作愉快",
     };
   },
   components: {
@@ -162,6 +162,7 @@ export default {
   },
   computed: {
     ...mapState("user", ["userInfo"]),
+    ...mapState("theme", ["greetings", "PC"]),
     getTimeState() {
       // 获取当前时间
       let timeNow = new Date();
@@ -169,19 +170,21 @@ export default {
       let hours = timeNow.getHours();
       // 设置默认文字
       let state = ``;
+      // 随机下标
+      let index = Math.floor(Math.random() * 6);
       // 判断当前时间段
       if (hours >= 0 && hours <= 10) {
         state = `早上好!`;
-        this.greetings = "祝您新的一天工作愉快";
+        this.welcome = this.greetings[0][index];
       } else if (hours > 10 && hours <= 14) {
         state = `中午好!`;
-        this.greetings = "休息一下吧！";
+        this.welcome = this.greetings[1][index];
       } else if (hours > 14 && hours <= 18) {
         state = `下午好!`;
-        this.greetings = "我猜你需要来一杯下午茶";
+        this.welcome = this.greetings[2][index];
       } else if (hours > 18 && hours <= 24) {
         state = `晚上好!`;
-        this.greetings = "早点休息哦";
+        this.welcome = this.greetings[3][index];
       }
       return state;
     },
@@ -247,17 +250,17 @@ export default {
   width: 100%;
   height: 70px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 .index-head-centent-right-list {
   height: 56px;
   cursor: pointer;
-  margin-left: 20px;
 }
 .index-head-centent-right-list-icon {
   font-size: 14px;
   display: flex;
+  align-items: center;
   margin-bottom: 5px;
   color: #808695;
 }
@@ -274,7 +277,7 @@ export default {
   height: 28px;
   line-height: 28px;
   font-weight: bold;
-  text-align: right;
+  text-align: center;
   font-size: 20px;
 }
 .index-centent {
@@ -365,5 +368,17 @@ export default {
   width: 100%;
   padding: 15px 15px 0;
   box-sizing: border-box;
+}
+@media screen and (max-width: 750px) {
+  .index {
+    &-head {
+      &-left-avatar {
+        display: none;
+      }
+    }
+    &-centent {
+      padding: 8px;
+    }
+  }
 }
 </style>

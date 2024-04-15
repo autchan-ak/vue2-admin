@@ -1,5 +1,5 @@
 <template>
-  <el-pagination
+  <el-pagination style="margin-top: 5px;"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
     :current-page="currentPage"

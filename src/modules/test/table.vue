@@ -75,8 +75,8 @@
         @selection-change="selectionChange"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="role_name" label="角色名称" show-overflow-tooltip />
-        <el-table-column prop="role_desc" label="角色描述" show-overflow-tooltip />
+        <el-table-column prop="roleName" label="角色名称" show-overflow-tooltip />
+        <el-table-column prop="roleDesc" label="角色描述" show-overflow-tooltip />
         <el-table-column label="角色状态" width="100" align="center">
           <template v-slot="{ row }">
             <el-switch

@@ -28,9 +28,9 @@
           ref="loginForm"
           class="demo-ruleForm"
         >
-          <el-form-item prop="account">
+          <el-form-item prop="username">
             <el-input
-              v-model="loginForm.account"
+              v-model="loginForm.username"
               placeholder="请输入用户名"
               size="medium"
             >
@@ -44,12 +44,27 @@
               placeholder="请输入密码"
               size="medium"
             >
-              <!-- <i slot="prefix" class="el-input__icon el-icon-search"></i> -->
               <i
                 slot="prepend"
                 @click="pwdShow = !pwdShow"
                 class="el-icon-key"
               />
+            </el-input>
+          </el-form-item>
+          <el-form-item prop="code">
+            <el-input
+              type="text"
+              clearable
+              v-model.trim="loginForm.code"
+              placeholder="验证码"
+            >
+              <template slot="append">
+                <div
+                  class="login-code"
+                  v-html="loginForm.codeSvg"
+                  @click="getCodeSvg"
+                ></div>
+              </template>
             </el-input>
           </el-form-item>
           <el-form-item>
@@ -77,12 +92,15 @@ export default {
       pwdShow: false,
       loginForm: {
         // 登陆表单
-        account: "",
+        username: "",
         password: "",
+        code: "",
+        codeSvg: "",
+        key: "",
       },
       rules: {
         //登陆验证规则
-        account: [
+        username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
           {
             min: 2,
@@ -103,8 +121,11 @@ export default {
       },
     };
   },
+  mounted() {
+    this.getCodeSvg();
+  },
   methods: {
-    ...mapActions("user", ["login"]),
+    ...mapActions("user", ["login","getLoginCaptcha"]),
     submitForm() {
       this.$refs.loginForm.validate((valid) => {
         if (!valid) {
@@ -112,6 +133,13 @@ export default {
         }
         this.loading = true;
         this._login();
+      });
+    },
+    getCodeSvg() {
+      this.getLoginCaptcha().then((res) => {
+        this.loginForm.codeSvg = res.codeSvg || "";
+        this.loginForm.key = res.key || "";
+        this.loading = false;
       });
     },
     _login() {
@@ -127,7 +155,7 @@ export default {
           this.$notify({
             title: "欢迎回来",
             message: "上次登陆时间：" + res.data.userInfo.login_time,
-            offset: 100
+            offset: 100,
           });
         })
         .catch((error) => {

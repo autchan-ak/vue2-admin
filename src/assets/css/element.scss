@@ -11,32 +11,6 @@
   }
 }
 
-.el-row {
-  .el-col {
-    margin-bottom: 10px;
-  }
-}
-
-// 菜单
-.el-menu--popup {
-  background: #fff !important;
-  border-right: solid 1px #e6e6e6;
-
-  * {
-    color: #909399 !important;
-  }
-}
-
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-  border-right: none;
-  width: 200px;
-  min-height: 400px;
-}
-
-.el_button {
-  margin-bottom: 15px;
-}
-
 .el-menu--horizontal {
   border-bottom: none !important;
 }
@@ -57,17 +31,8 @@
   display: table-cell !important;
 }
 
-.el-select,
-.el-range-editor--small.el-input__inner {
-  width: 100%;
-}
 
-// 删除此刻
-.el-picker-panel__footer .el-button--text.el-picker-panel__link-btn {
-  display: none;
-}
-
-// 下拉框为tree。
+// 下拉框为tree
 .el-tree-select-option {
   height: auto;
   padding: 0;
@@ -79,32 +44,52 @@
   }
 }
 
+
+.el-select,
+.el-cascader,
+.el-date-editor.el-input,
+.el-range-editor--small.el-input__inner {
+  width: 100%;
+}
+
+
 // 加载遮罩
 .el-loading-mask {
   z-index: 99999;
 }
 
-// 去掉input数字箭头
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
+.el-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block !important;
 }
 
-input[type='number'] {
-  -moz-appearance: textfield !important;
-}
-
-.el-button.el-button--text {
-
-  &:focus,
-  &:hover {
-    color: unset !important;
+// 橫向滚动条影藏
+.el-scrollbar {
+  .el-scrollbar__wrap:not(.el-select-dropdown__wrap) {
+    overflow-x: hidden;
+    padding-bottom: 20px;
   }
 }
 
-.el-scrollbar__wrap {
-  &::-webkit-scrollbar {
-    display: none;
-    width: 0 !important;
+.el-dropdown-link {
+  margin-left: 10px;
+  cursor: pointer;
+  color: #409EFF;
+}
+
+.el-input-number {
+  width: 100%;
+
+  &.is-without-controls {
+    .el-input__inner {
+      text-align: left;
+    }
   }
+}
+
+// 头像
+.el-avatar>img{
+  width: 100%;
+  object-fit: contain !important;
 }

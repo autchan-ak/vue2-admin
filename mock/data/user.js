@@ -5,7 +5,7 @@ export const UserList = [
     {
         "id": "1",
         "nickName": "admin",
-        "account": "admin",
+        "userAccount": "admin",
         "user_desc":"请不要恶意修改此账号",
         "introduction": "我就是我，不一样的烟火~",
         "createdAt": 1540533196000,
@@ -23,7 +23,7 @@ export const UserList = [
         "nickName": "体验",
         "user_desc":"开放访问",
         "avatar": 'https://t14.baidu.com/it/u=2637606604,2200077212&fm=224&app=112&f=JPEG',
-        "account": "test",
+        "userAccount": "test",
         "introduction": "哎，就是玩~",
         "createdAt": 1557042558000,
         "roleId": "qqqwwweeerrrttt",
@@ -38,7 +38,7 @@ export const UserList = [
     {
         "id": "3",
         "nickName": "杰克",
-        "account": "jack",
+        "userAccount": "jack",
         "introduction": "汤姆,汤姆！我是杰克啊",
         "createdAt": 1540533006000,
         "state": false,
@@ -54,7 +54,7 @@ export const UserList = [
     {
         "id": "4",
         "nickName": "测试角色1",
-        "account": "test1",
+        "userAccount": "test1",
         "introduction": "测试随便玩",
         "createdAt": 1557042558000,
         "state": false,

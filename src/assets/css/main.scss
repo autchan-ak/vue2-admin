@@ -1,11 +1,16 @@
 @import './base.scss';
 @import './element.scss';
+@import './screen.scss';
 
 
 .app-wrapper {
     width: 100%;
     height: calc(100% + 1px);
     overflow: hidden;
+
+    .screen-phone {
+        display: none;
+    }
 
     .app-box {
         width: 100%;
@@ -60,11 +65,14 @@
                             border-right: none !important;
 
                             &.el-menu--collapse {
-                                .menu--collapes-icon+span {
-                                    +i{
-                                        display: none;
+                                .menu-wrapper {
+                                    .el-submenu__title {
+
+                                        .el-icon-arrow-right,
+                                        .menu--collapes-icon+span {
+                                            display: none;
+                                        }
                                     }
-                                    display: none;
                                 }
                             }
                         }
@@ -224,9 +232,7 @@
                             box-shadow: 1px 1px 3px rgb(0 0 0 / 20%);
 
                             .button_group {
-                                button{
-                                    margin-bottom: 15px;
-                                }
+                                margin-bottom: 15px;
                             }
 
                             .el-table {
@@ -249,6 +255,43 @@
 
                     }
 
+                    // 详情页
+                    .infor-detail {
+                        background: #fff;
+                        border-radius: 5px;
+                        padding: 15px;
+
+                        .back {
+                            display: flex;
+                            align-items: center;
+
+                            >i {
+                                cursor: pointer;
+                                margin-top: 5px;
+
+                                &:hover {
+                                    color: #E6A23C;
+                                }
+                            }
+
+                            &-title {
+                                margin-left: 10px;
+
+                                &::before {
+                                    content: '|';
+                                    margin-right: 5px;
+                                }
+                            }
+
+                            &-right {
+                                flex: 1;
+                                text-align: right;
+                            }
+
+                            font-size: 20px;
+                            font-weight: bolder;
+                        }
+                    }
                 }
             }
 
@@ -270,7 +313,27 @@
     }
 }
 
+.el-menu--popup {
+    background: #fff !important;
+    border-right: solid 1px #e6e6e6;
 
+    * {
+        color: #909399 !important;
+    }
+}
+
+.el-row {
+    .el-col {
+        margin-bottom: 10px;
+    }
+}
+
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    border-right: none;
+    width: 200px;
+    min-height: 400px;
+}
 
 // 顶部
 .headers {

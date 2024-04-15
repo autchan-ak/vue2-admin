@@ -1,7 +1,7 @@
 // 权限管理模块
 import { asyncRoutes } from '@/router'
 import Layout from '@/layout' //布局页
-import { assembleTree } from "@/utils/BaseUtil";
+import { assembleTree, deepCopy} from "@/utils/BaseUtil";
 
 /**
  * 将路由按指定格式重组
@@ -13,7 +13,7 @@ function formatRouter(menu) {
     menu.forEach(m => {
         res.push({
             path: m.path[0] !== '/' ? `/${m.path}` : m.path,
-            hidden: !!m.isHidden,
+            hidden: !m.isShow,
             component: loadView(m),
             redirect: redirectView(m),
             meta: {
@@ -22,7 +22,6 @@ function formatRouter(menu) {
                 title: m.title,
                 sort: m.orderNum,
                 icon: m.icon,
-                ena: !!m.ena
             }
         })
         if (m.children) {
@@ -33,7 +32,7 @@ function formatRouter(menu) {
     return res
 }
 const loadView = (m) => {
-    if (m.lever == 1) return Layout;
+    if (m.menuType == "M") return Layout;
     if (m.path === '#') return Layout;
     if (m.path[0] !== '/') {
         m.path = '/' + m.path
@@ -57,7 +56,7 @@ const redirectView = (m) => {
 function isAuthenEna(route, path) {
     let v = false;
     route.forEach(item => {
-        if (item.path === path && item.meta.ena) {
+        if (item.path === path && item.meta.state) {
             v = '当前路径已被禁用,请联系管理员';
         }
         if (item.children && !v) {
@@ -87,6 +86,7 @@ function isJurisdictionPath(route, path) {
 }
 const state = {
     routes: [],
+    // addRoutes: []  //用户可访问路由表
 }
 
 const mutations = {
@@ -99,13 +99,13 @@ const actions = {
     generateRoutes({ commit }, users) {
         return new Promise(resolve => {
             // 格式化菜单 并
-            let Tree = assembleTree(users.roles.menus)
+            let Tree = assembleTree(deepCopy(users.roles.menus))
             let accessedRoutes = formatRouter(Tree)
+            accessedRoutes.push({ path: "*", redirect: "/404", hidden: true });
             commit('SET_ROUTES', accessedRoutes)
             resolve(accessedRoutes)
         })
     },
-
 }
 
 export default {

@@ -12,7 +12,8 @@ const USER_INFOT = 'userinfo';
  * 保存token
  */
 export const setToken = token => {
-    sessionStorage.setItem(TOKEN, BASE64Helper.encode(JSON.stringify(token)))
+    // sessionStorage.setItem(TOKEN, BASE64Helper.encode(JSON.stringify(token)))
+    localStorage.setItem(TOKEN, BASE64Helper.encode(JSON.stringify(token)))
 }
 
 /**
@@ -20,9 +21,9 @@ export const setToken = token => {
  */
 export const getToken = () => {
     try {
-        return JSON.parse(BASE64Helper.decode(sessionStorage.getItem(TOKEN)))
+        // return JSON.parse(BASE64Helper.decode(sessionStorage.getItem(TOKEN)))
+        return JSON.parse(BASE64Helper.decode(localStorage.getItem(TOKEN)))
     } catch (err) {
-        console.error('暂无登陆，请重新登陆！');
         return ''
     }
 }
@@ -31,8 +32,8 @@ export const getToken = () => {
  * 清除token
  */
 export const removeToken = ()=>{
-    // localStorage.clear()
-    sessionStorage.clear()
+    localStorage.clear()
+    // sessionStorage.clear()
 }
 
 /**
@@ -42,7 +43,8 @@ export const saveUserInfo = (userinfo = {}) => {
     if (isEmpty(userinfo)) {
         return
     }
-    sessionStorage.setItem(USER_INFOT, BASE64Helper.encode(JSON.stringify(userinfo)))
+    // sessionStorage.setItem(USER_INFOT, BASE64Helper.encode(JSON.stringify(userinfo)))
+    localStorage.setItem(USER_INFOT, BASE64Helper.encode(JSON.stringify(userinfo)))
 }
 
 /**
@@ -50,9 +52,9 @@ export const saveUserInfo = (userinfo = {}) => {
  */
 export const loadUserinfo = () => {
     try {
-        return JSON.parse(BASE64Helper.decode(sessionStorage.getItem(USER_INFOT)))
+        // return JSON.parse(BASE64Helper.decode(sessionStorage.getItem(USER_INFOT)))
+        return JSON.parse(BASE64Helper.decode(localStorage.getItem(USER_INFOT)))
     } catch (err) {
-        console.error('用户信息加载失败');
         return {}
     }
 }

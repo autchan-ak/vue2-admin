@@ -1,8 +1,3 @@
-/** 公共方法类 */
-import { getToken } from '@/utils/auth'
-import config from '@/config/config'
-
-
 
 /**
  * 格式化文件大小
@@ -42,7 +37,7 @@ export function downloadIamge(imgsrc, name) {
   let image = new Image()
   // 解决跨域 Canvas 污染问题
   image.setAttribute('crossOrigin', 'anonymous')
-  image.onload = function() {
+  image.onload = function () {
     let canvas = document.createElement('canvas')
     canvas.width = image.width
     canvas.height = image.height
@@ -82,23 +77,6 @@ export function getImageInfo(imgsrc) {
   }
 }
 
-/**
- * 文件下载方法
- *
- * @param {Number} cr_id
- */
-export function download(cr_id) {
-  let api = config.BASE_API_URL
-  let token = getToken()
-  try {
-    let link = document.createElement('a')
-    link.target = "_blank"
-    link.href = `${api}/api/v1/talk/records/file/download?cr_id=${cr_id}&token=${token}`
-    link.click()
-  } catch (e) {}
-}
-
-
 
 /**
  * 去除字符串控制
@@ -128,12 +106,12 @@ export function param2Obj(url) {
 
   return JSON.parse(
     '{"' +
-      decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"')
-        .replace(/\+/g, ' ') +
-      '"}'
+    decodeURIComponent(search)
+      .replace(/"/g, '\\"')
+      .replace(/&/g, '","')
+      .replace(/=/g, '":"')
+      .replace(/\+/g, ' ') +
+    '"}'
   )
 }
 
@@ -322,7 +300,7 @@ export function beautifyTime(datetime = '') {
 }
 
 export function getSort(fn) {
-  return function(a, b) {
+  return function (a, b) {
     let ret = 0
 
     if (fn.call(this, a, b)) {
@@ -341,7 +319,7 @@ export function getSort(fn) {
  * @param {*} arr
  */
 export function getMutipSort(arr) {
-  return function(a, b) {
+  return function (a, b) {
     let tmp
     let i = 0
 
@@ -378,21 +356,41 @@ export function textReplaceLink(text, color = '#409eff') {
 export function debounce(func, wait, immediate) {
   let timeout
 
-  return function() {
+  return function () {
     let context = this
     let args = arguments
 
     if (timeout) clearTimeout(timeout) // timeout 不为null
     if (immediate) {
       let callNow = !timeout // 第一次会立即执行，以后只有事件执行后才会再次触发
-      timeout = setTimeout(function() {
+      timeout = setTimeout(function () {
         timeout = null
       }, wait)
       if (callNow) func.apply(context, args)
     } else {
-      timeout = setTimeout(function() {
+      timeout = setTimeout(function () {
         func.apply(context, args)
       }, wait)
     }
   }
+}
+
+
+/**
+ * 下划线转驼峰
+ * @param {*} data 
+ * @returns 
+ */
+export function underlineToHump(data) {
+  if (typeof data != 'object' || !data) return data
+  if (Array.isArray(data)) {
+    return data.map(item => underlineToHump(item))
+  }
+
+  const newData = {}
+  for (let key in data) {
+    let newKey = key.replace(/_([a-z])/g, (p, m) => m.toUpperCase())
+    newData[newKey] = underlineToHump(data[key])
+  }
+  return newData
 }

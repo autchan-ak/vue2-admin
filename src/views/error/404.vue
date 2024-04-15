@@ -1,8 +1,11 @@
 <!-- 404 -->
 <template>
   <div class="notFound">
-    <div>
-      <img src="../../assets/image/404.png" />
+    <div class="notFound-img">
+      <img src="@/assets/image/404.png" alt="404" />
+      <img class="notFound-img-child left" src="@/assets/image/404_cloud.png" alt="404" />
+      <img class="notFound-img-child mid" src="@/assets/image/404_cloud.png" alt="404" />
+      <img class="notFound-img-child right" src="@/assets/image/404_cloud.png" alt="404" />
     </div>
     <div class="text">
       <h2>页面没有找到</h2>

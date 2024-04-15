@@ -4,7 +4,7 @@ const { RolesList } = require('./data/role')
 module.exports = [
   // user login
   {
-    url: '/user/login',
+    url: '/public/admin/login',
     type: 'post',
     response: config => {
       const { username } = config.body
@@ -22,7 +22,7 @@ module.exports = [
     }
   },
   {
-    url: "/user/userInfo",
+    url: "/private/users/infor",
     type: 'get',
     response: _ => {
       return {
@@ -32,19 +32,7 @@ module.exports = [
     }
   },
   {
-    url: '/user/roles',
-    type: 'post',
-    response: config => {
-      let roleId = config.body
-      return {
-        meta: { status: 200 },
-        data: RolesList.filter(i => i.id === roleId)[0]
-      }
-    }
-  },
-  // user logout
-  {
-    url: '/user/logout',
+    url: '/public/admin/login/out',
     type: 'post',
     response: _ => {
       return {

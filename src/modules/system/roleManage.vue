@@ -4,16 +4,16 @@
     <!-- 搜索 -->
     <div class="queryInfo">
       <el-row :gutter="20">
-        <el-col :sm="8" :md="6" :lg="4">
+        <el-col :sm="8" :md="6">
           <el-input
-            v-model="queryInfo.params.role_name"
+            v-model.trim="queryInfo.params.roleName"
             size="small"
             placeholder="请输入角色名称"
           ></el-input>
         </el-col>
         <el-col :sm="8" :md="6">
           <el-date-picker
-            v-model="queryInfo.params.createdAt"
+            v-model="queryInfo.params.time"
             type="daterange"
             size="small"
             :clearable="false"
@@ -25,7 +25,7 @@
           >
           </el-date-picker>
         </el-col>
-        <el-col :span="2" :xs="4">
+        <el-col :sm="8" :md="6">
           <el-button
             v-permission="'query'"
             type="primary"
@@ -33,8 +33,6 @@
             @click="handleSizeChange()"
             >搜索</el-button
           >
-        </el-col>
-        <el-col :span="2" :xs="4">
           <el-button size="small" @click="reset_query()">重置</el-button>
         </el-col>
       </el-row>
@@ -50,43 +48,18 @@
           @click="showDialogAdd(0)"
           >新增</el-button
         >
-        <el-button
-          v-permission="'update'"
-          type="warning"
-          icon="el-icon-edit"
-          size="small"
-          @click="editRole"
-          >修改</el-button
-        >
-        <el-button
-          v-permission="'delete'"
-          type="danger"
-          icon="el-icon-delete"
-          size="small"
-          @click="remove(0)"
-          >删除</el-button
-        >
       </div>
-      <el-table
-        border
-        size="small"
-        row-key="id"
-        :data="tableData"
-        @selection-change="selectionChange"
-      >
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="role_name" label="角色名称" show-overflow-tooltip />
-        <el-table-column prop="role_desc" label="角色描述" show-overflow-tooltip />
-        <el-table-column label="角色状态" width="100" align="center">
+      <el-table border size="small" row-key="id" :data="tableData">
+        <el-table-column prop="roleName" width="150" label="角色名称" />
+        <el-table-column prop="roleDesc" label="角色描述" />
+        <el-table-column label="角色状态" width="80" align="center">
           <template v-slot="{ row }">
-            <el-switch
-              v-model="row.state"
-              @change="changeEna(row)"
-              :active-value="false"
-              :inactive-value="true"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-            />
+            <el-tag
+              effect="dark"
+              :type="row.state ? 'danger' : 'success'"
+              size="medium"
+              >{{ row.state ? "禁用" : "启用" }}</el-tag
+            >
           </template>
         </el-table-column>
         <el-table-column label="创建时间">
@@ -141,7 +114,8 @@
     <el-dialog
       :title="dialog.title"
       :visible.sync="dialog.show"
-      width="30%"
+      :close-on-click-modal="false"
+      width="500px"
       :before-close="handleClose"
     >
       <el-form
@@ -150,11 +124,18 @@
         ref="addFormData"
         label-width="80px"
       >
-        <el-form-item label="角色名称" prop="role_name">
-          <el-input v-model="addFormData.role_name" />
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model.trim="addFormData.roleName" />
         </el-form-item>
-        <el-form-item label="角色描述" prop="role_desc">
-          <el-input type="textarea" rows="3" v-model="addFormData.role_desc" />
+        <el-form-item label="角色编码" prop="roleCode">
+          <el-input v-model.trim="addFormData.roleCode" />
+        </el-form-item>
+        <el-form-item label="角色描述" prop="roleDesc">
+          <el-input
+            type="textarea"
+            rows="3"
+            v-model.trim="addFormData.roleDesc"
+          />
         </el-form-item>
         <el-form-item label="角色状态">
           <el-select v-model="addFormData.state">
@@ -205,15 +186,11 @@ export default {
         sort: { prop: "createdAt", order: "desc" },
       },
       tableData: [],
-      check: [],
       addFormData: {
         state: false,
       },
       formRules: {
-        role_desc: [
-          { required: true, message: "请输入角色描述", trigger: "blur" },
-        ],
-        role_name: [
+        roleName: [
           { required: true, message: "请输入角色名称", trigger: "blur" },
         ],
       },
@@ -231,19 +208,19 @@ export default {
 
   methods: {
     ...mapActions("system", [
+      "rolesSever",
       "rolesList",
-      "setEna",
-      "rolesSeve",
+      "rolesPreservation",
       "rolesRome",
     ]),
     async seach_query() {
       showLoading("加载中");
-      if (this.queryInfo.params.createdAt) {
-        this.queryInfo.params.createdAt[1] = this.$dateFormat(
-          this.queryInfo.params.createdAt[1]
+      if (this.queryInfo.params.time) {
+        this.queryInfo.params.endTime = this.$dateFormat(
+          this.queryInfo.params.time[1]
         ).replace(/00:00:00/, "23:59:59");
-        this.queryInfo.params.createdAt[0] = this.$dateFormat(
-          this.queryInfo.params.createdAt[0]
+        this.queryInfo.params.startTime = this.$dateFormat(
+          this.queryInfo.params.time[0]
         );
       }
       let res = await this.rolesList({
@@ -258,9 +235,6 @@ export default {
         command,
       };
     },
-    selectionChange(val) {
-      this.check = [...val];
-    },
     // 新增
     showDialogAdd(row) {
       if (row) {
@@ -272,12 +246,6 @@ export default {
       }
       this.dialog.show = true;
     },
-    editRole() {
-      if (this.check.length != 1) return showError("请选择一条要修改的角色");
-      this.dialog.title = "修改";
-      this.addFormData = { ...this.check[0] };
-      this.dialog.show = true;
-    },
     // 保存
     sever_Role() {
       this.$refs["addFormData"].validate(async (valid) => {
@@ -285,33 +253,29 @@ export default {
           return false;
         }
         showLoading(true);
-        await this.rolesSeve(this.addFormData);
+        await this.rolesSever({
+          id: this.addFormData.id,
+          roleName: this.addFormData.roleName,
+          roleDesc: this.addFormData.roleDesc,
+          roleCode: this.addFormData.roleCode,
+          state: this.addFormData.state,
+          menus: this.addFormData.menus.map((i) => i.id),
+        });
         this.handleClose();
       });
     },
     // 更多
     handleCommand(obj) {
       this.roleRow = obj;
-      this.title = `（${obj.role_name}）角色权限`;
+      this.title = `（${obj.roleName}）角色权限`;
       this.rolePermissions = true;
     },
-    // 禁用启用
-    async changeEna(row) {
-      await this.setEna({ id: row.id });
-      this.seach_query();
-    },
-    modify() {},
     // 删除
     remove(id) {
-      if (!id && !this.check.length) return showError("请选择要删除的角色");
       confirm("确认删除", "提示", {
         ok: async () => {
           showLoading("正在删除");
-          let _id = [];
-          this.check.forEach((item) => {
-            _id.push(item.id);
-          });
-          await this.rolesRome({ id: id ? [id] : _id });
+          await this.rolesRome({ id: [id] });
           this.seach_query();
         },
       });
@@ -331,10 +295,12 @@ export default {
       this.seach_query();
     },
     handleSizeChange(v) {
-      this.limit = v;
+      this.queryInfo.limit = v || this.queryInfo.limit;
+      this.queryInfo.offset = 1;
       this.seach_query();
     },
     handleCurrentChange(v) {
+      this.queryInfo.offset = v || 1;
       this.seach_query();
     },
   },

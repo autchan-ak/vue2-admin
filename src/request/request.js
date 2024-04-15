@@ -33,6 +33,7 @@ const axiosInstance = Axios.create({
         }
         if (isObject(data)) {
             headers['Content-Type'] = 'application/json;charset=utf-8';
+            // setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
             return JSON.stringify(data);
         }
         return JSON.stringify(data);

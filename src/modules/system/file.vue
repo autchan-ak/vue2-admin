@@ -4,14 +4,14 @@
     <!-- 搜索 -->
     <div class="queryInfo">
       <el-row :gutter="20">
-        <el-col :sm="8" :md="6" :lg="4">
+        <el-col :sm="8" :md="6">
           <el-input
             v-model="queryInfo.params.name"
             size="small"
             placeholder="请输入名称"
           />
         </el-col>
-        <el-col :sm="8" :md="6" :lg="4">
+        <el-col :sm="8" :md="6">
           <el-select
             v-model="queryInfo.params.select"
             size="small"
@@ -76,8 +76,8 @@
               v-if="['png', 'jpg', 'gif', 'jpeg', 'jfif'].includes(row.ext)"
               style="width: 50px; height: 50px"
               fit="fill"
-              :src="row.url"
-              :preview-src-list="[row.url]"
+              :src="$host+row.url"
+              :preview-src-list="[$host+row.url]"
             />
 
             <audio
@@ -112,7 +112,7 @@
               v-permission="'download'"
               type="text"
               size="mini"
-              @click="download(row.name)"
+              @click="download(row)"
               >下载</el-button
             >
             <el-button
@@ -175,28 +175,6 @@ export default {
     ...mapActions("system", ["fileList", "flieRome", "fileDownload"]),
     // 搜索
     async seach_query() {
-      this.tableData = [{
-        "name":"d7732e70-4fbc-410c-98bd-a26627c91cc1.png",
-        "select":"",
-        "ext":"png",
-        "size":"2.09M",
-        "url":"https://z1.ax1x.com/2023/09/15/pPfiiLD.jpg",
-        "content":"蝌蚪云题库",
-        "username":"admin",
-        "createdAt": "2023-04-21T18:54:23.000Z",
-        "updatedAt": "2023-04-21T18:54:23.000Z"
-    },{
-        "name":"d7732e70-4fbc-410c-98bd-a26627c91cc1.png",
-        "select":"",
-        "ext":"png",
-        "size":"2.09M",
-        "url":"https://z1.ax1x.com/2023/09/15/pPfiiLD.jpg",
-        "content":"云计算",
-        "username":"admin",
-        "createdAt": "2023-04-21T18:54:23.000Z",
-        "updatedAt": "2023-04-21T18:54:23.000Z"
-    },]
-      return
       showLoading("加载中");
       let res = await this.fileList({
         ...this.queryInfo,
@@ -221,9 +199,10 @@ export default {
       });
     },
     // 下载
-    async download(name) {
-      let data = await this.fileDownload(name);
-      downloadByBlob(data, { filename: name });
+    async download(row) {
+      let data = await this.fileDownload(row.id);
+      // 下载文件
+      downloadByBlob(data, { filename: row.name });
     },
     // 音视频播放
     videoPlay(row) {

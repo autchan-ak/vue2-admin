@@ -23,7 +23,7 @@ export const asyncRoutes = [
         path: '/index',
         component: () => import('@/views/index/index.vue'),
         meta: {
-          title: "工作台",
+          title: "首页",
           icon: 'el-icon-s-home',
         }
       },
@@ -38,7 +38,7 @@ export const asyncRoutes = [
     hidden: true //导航菜单忽略选项
   },
   {
-    path: '*',
+    path: '/404',
     meta: {
       title: "页面走丢了",
     },

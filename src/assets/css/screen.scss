@@ -1,0 +1,81 @@
+// 适配
+@media screen and (max-width: 900px) {
+    .app-wrapper{
+        .el-dialog{
+            width: 80% !important;
+        }
+    } 
+}
+@media screen and (max-width: 750px) {
+   .app-wrapper{
+    .app-box{
+        .phone{
+            &-drawer{
+                width: 100%;
+                .el-drawer__header{
+                    position: absolute;
+                    top: 0;
+                    z-index: 2;
+                    width: 100%;
+                    box-sizing: border-box;
+                    height: 50px;
+                    margin: 0;
+                }
+                .sidebar{
+                    &-title{
+                        height: 70px;
+                        line-height: 70px;
+                        padding: 10px 0;
+                        font-size: 18px !important;
+                        font-weight: bold;
+                    }
+                    &-box{
+                        width: calc(100% - 20px) !important;
+                        height: calc(100% - 85px) !important;
+                        margin-top: 10px;
+                        .el-submenu__title{
+                            padding-left: 40px !important;
+                        }
+                        .el-menu-item{
+                            padding-left: 40px !important;
+                        }
+                        .el-submenu .el-menu-item{
+                            padding-left: 60px !important;
+                        }
+                    }
+                    &-menu{
+                        box-sizing: border-box;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+        .main-container-views{
+            padding: 5px !important;
+            .table-page{
+                .queryInfo,
+                .main_list,.box_card,.box_card_border{
+                    padding:10px 5px !important;
+                }
+                .box_card{
+                    font-size: 0.9em;
+                }
+                
+            }
+        }
+    }
+    .el-dialog{
+        margin-top: 5vh !important;
+        width: 97% !important;
+        &__body {
+            font-size: 12px !important;
+            padding: 10px !important;
+          }
+    }
+    .el-backtop{
+        right: 15px !important;
+        bottom: 70px !important;
+        transform: scale(.8);
+    }
+   }
+}

@@ -4,6 +4,8 @@ vue2 后台管理系统模板
 [gitee 地址](https://gitee.com/todpole/vue2-admin)
 [github 地址](https://github.com/autchan-ak/vue2-admin)
 
+后台使用node👉 [node_serve](https://gitee.com/todpole/node-serve)
+
 
 [github预览地址：](https://autchan-ak.github.io/vue2-admin.github.io/)https://autchan-ak.github.io/vue2-admin.github.io/
 
@@ -23,6 +25,7 @@ vue2 后台管理系统模板
 
 ```
 npm install
+pnpm install
 ```
 
 ### 启动项目

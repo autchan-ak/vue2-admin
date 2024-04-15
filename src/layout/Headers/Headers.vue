@@ -11,17 +11,18 @@
       <Breadcrumb />
     </div>
     <div class="headers-right">
-      <div class="headers-right-left">
+      <div class="headers-right-left" v-if="PC">
         <div
           class="headers-right-left-seach"
           :style="{ width: search ? '150px' : '0' }"
         >
           <el-autocomplete
+            size="mini"
             ref="showSearch"
             class="inline-input"
             v-model="searchValue"
             :fetch-suggestions="querySearch"
-            placeholder="请输入内容"
+            placeholder="搜索目录"
             @blur="showSearch"
             :trigger-on-focus="false"
             @select="handleSelect"
@@ -61,20 +62,11 @@
           </div>
         </el-tooltip>
       </div>
-      <!-- 天气 -->
-      <div id="he-plugin-simple"></div>
       <div class="headers-right-right">
-        <div class="block" @click="goHome">
-          <el-avatar
-            shape="square"
-            size="large"
-            :src="userInfo.avatar"
-          ></el-avatar>
-        </div>
         <el-dropdown size="medium" trigger="click" @command="handleCommand">
           <span class="el-dropdown-link">
             <span>
-              {{ userInfo.uname }}
+              {{ userInfo.nickName }}
             </span>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -103,13 +95,9 @@ import screenfull from "screenfull";
 // 面包屑
 import Breadcrumb from "../Breadcrumb/Breadcrumb.vue";
 import DrawerTheme from "./theme.vue";
-// 通知栏组件
-import squareUrl from "@/assets/image/UserHead.png";
-
 export default {
   data() {
     return {
-      squareUrl,
       isFullscreen: false,
       dropShow: false, // 是否现实通知栏
       setTime: null, //定时器
@@ -126,8 +114,9 @@ export default {
   },
   computed: {
     ...mapState("user", ["userInfo"]),
-    ...mapState("theme", ["showSidebar"]),
+    ...mapState("theme", ["showSidebar","PC"]),
     ...mapState("permission", ["routes"]),
+    ...mapState("notification", ["noticeBadge"]),
   },
   methods: {
     ...mapActions("user", ["resetToken"]),
@@ -141,17 +130,16 @@ export default {
         this.$refs.showSearch.focus();
       }
     },
-    loadAll(array, path) {
-      path = path === "/" ? "" : path;
+    loadAll(array) {
       array.forEach((item) => {
         if (item.meta && item.meta.title) {
           this.restaurants.push({
             value: item.meta.title,
-            path: (path ? path + "/" : "") + item.path,
+            path: item.path,
           });
         }
         if (item.children && item.children.length) {
-          this.loadAll(item.children, item.path);
+          this.loadAll(item.children);
         }
       });
     },
@@ -214,7 +202,7 @@ export default {
     handleCommand(command) {
       switch (command) {
         case "quit":
-          this.resetToken().then(()=>{
+          this.resetToken().then(() => {
             this.$router.replace("/login");
           });
           break;
@@ -222,9 +210,6 @@ export default {
           this.dialogFormVisible = true;
           break;
       }
-    },
-    goHome() {
-      this.$router.push("/home");
     },
     // 展开通知
     dropShowBtn() {
@@ -248,48 +233,5 @@ export default {
       this.dialogFormVisible = false;
     },
   },
-  mounted() {
-    //     // 浏览器窗口改变事件
-    this.isFullscreen = document.body.scrollHeight === window.screen.height;
-    // 配置天气
-        window.WIDGET = {
-      "CONFIG": {
-        "modules": "0124",
-        "background": "5",
-        "tmpColor": "434343",
-        "tmpSize": "16",
-        "cityColor": "434343",
-        "citySize": "16",
-        "aqiSize": "16",
-        "weatherIconSize": "24",
-        "alertIconSize": "18",
-        "padding": "10px 10px 10px 10px",
-        "shadow": "0",
-        "language": "zh",
-        "fixed": "false",
-        // "vertical": "center",
-        // "horizontal": "center",
-        "key": "e32d7b799f9b4c8081739c64f099f2ec"
-    }
-        };
-        let script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src =
-          "https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0";
-        document.getElementsByTagName("head")[0].appendChild(script);
-  },
 };
 </script>
-<style>
-#he-plugin-simple{
-  z-index: 99;
-  animation: all .5s;
-}
-#he-plugin-simple>div:last-child>div{
-  top: calc(100% - 2px) !important;
-}
-#he-plugin-simple>div:last-child>div>div{
-  height: auto !important;
-}
-  
-</style>

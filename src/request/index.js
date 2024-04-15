@@ -2,7 +2,7 @@ import Request, { isRequestTimeout } from './request'
 import store from '@/store'
 import { showMessage, hideLoading } from '../utils'
 import { getToken } from '@/utils/ProjectTools'
-
+import { underlineToHump } from '@/utils/functions'
 
 // base url
 Request.defaults.baseURL = process.env.VUE_APP_REQUEST_BASE_API
@@ -11,6 +11,9 @@ Request.defaults.timeout = process.env.VUE_APP_REQUEST_TIMEOUT
 
 // 前缀拦截处理
 Request.interceptors.request.use(config => {
+    if (config.url.indexOf('/upload') != -1) {
+        config.timeout = 0
+    }
     // 添加 token
     config.headers['authorization'] = getToken()
     return config
@@ -24,13 +27,13 @@ const storeMessage = {
 
 // 响应处理
 Request.interceptors.response.use(response => {
-    const res = response.data;
     hideLoading()
     // 返回流数据
-    if (response.headers['content-type'] && response.headers['content-type'].search('application/octet-stream') !== -1) return res
+    if (response.headers['content-type']&&response.headers['content-type'].search('application/octet-stream') !== -1) return response.data
+    const res = underlineToHump(response.data);
     // 成功 不弹窗
     if (res.meta.status === 200) return res
-    if (storeMessage.timeout <= 0) {
+    if (storeMessage.timeout <= 0&&res.meta.msg) {
         storeMessage.timeout += 1
         showMessage({
             type: res.meta.type || 'error',
@@ -44,28 +47,38 @@ Request.interceptors.response.use(response => {
     if (res.meta.status === 201) return res
     // 退出 登录
     if (res.meta.status === 401) {
-        store.dispatch('user/resetToken')
+        setTimeout(() => {
+            store.dispatch('user/resetToken').then(() => {
+                location.reload()
+            })
+        }, 2000)
     }
     // 除以上状态一律失败
     throw new Error(res.meta.msg || 'Error',)
 }, error => {
-    const status = error.message.split(' ').slice(-1)[0]
-    let message = ''
-    switch (status) {
-        case '400': message = '请求错误'; break;
-        case '401':
-            message = '未授权，请登录'
-            store.dispatch('user/resetToken')
-            break;
-        case '403': message = '您的访问没有权限'; break;
-        case '404': message = '请求失败！未找到请求路由'; break;
-        case '408': message = '请求超时'; break;
-        case '500': message = '服务器内部错误'; break;
-        case '501': message = '服务未实现'; break;
-        case '502': message = '网关错误'; break;
-        case '503': message = '服务不可用'; break;
-        case '504': message = '网关超时'; break;
-        case '505': message = 'HTTP版本不受支持'; break;
+    let message = '';
+    const data = error.response && error.response.data
+    if (data) {
+        switch (data.meta.status+'') {
+            case '400': message = '请求错误'; break;
+            case '401':
+                message = '请登录！'
+                setTimeout(() => {
+                    store.dispatch('user/resetToken').then(() => {
+                        location.reload()
+                    })
+                }, 1000);
+                break;
+            case '403': message = '您的访问没有权限'; break;
+            case '404': message = '请求失败！未找到请求路由'; break;
+            case '408': message = '请求超时'; break;
+            case '500': message = '服务器内部错误'; break;
+            case '501': message = '服务未实现'; break;
+            case '502': message = '网关错误'; break;
+            case '503': message = '服务不可用'; break;
+            case '504': message = '网关超时'; break;
+            case '505': message = 'HTTP版本不受支持'; break;
+        }
     }
     if (isRequestTimeout(error)) {
         message = '请求超时'

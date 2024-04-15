@@ -13,7 +13,7 @@
     <el-input
       placeholder="输入关键字进行过滤"
       size="small"
-      v-model="filterText"
+      v-model.trim="filterText"
     />
     <el-checkbox
       v-model="menuNodeAll"
@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { assembleTree } from "../../../utils/BaseUtil";
+import { mapActions, mapState } from "vuex";
+import { assembleTree,deepCopy } from "../../../utils/BaseUtil";
 import { showLoading, confirm, showError } from "@/utils";
 export default {
   name: "",
@@ -63,16 +63,15 @@ export default {
     return {
       menuList: [],
       filterText: "",
+      menuNodeAll: false,
       defaultProps: {
         children: "children",
         label: "title",
       },
-      menuNodeAll: false,
-      menuOptions: [],
       expandedKeys: [],
+      menuOptions:[],
     };
   },
-  computed: {},
   watch: {
     filterText(val) {
       this.$refs.tree.filter(val);
@@ -81,19 +80,22 @@ export default {
   mounted() {
     this.init();
   },
-
+  computed: {
+    ...mapState("user", ["roles"]),
+  },
   methods: {
-    ...mapActions("system", ["getList", "modifyJurisdiction"]),
+    ...mapActions("system", ["getRolesMenus", "rolesSever"]),
     async init() {
-      showLoading(true);
-      // 获取所有目录权限
-      let { data } = await this.getList();
-      this.menuOptions = [...data];
-      this.menuList = assembleTree(data, false);
+      this.menuOptions = await this.getRolesMenus()
+      this.menuList = assembleTree(deepCopy(this.menuOptions), false);
       this.expandedKeys = this.row.menus.map((m) => m.id);
-      this.$refs.tree.setCheckedKeys([...this.expandedKeys]);
+      this.$nextTick(()=>{
+        if(this.expandedKeys.length==this.menuOptions.length){
+          this.menuNodeAll = true;
+        }
+        this.$refs.tree.setCheckedKeys([...this.expandedKeys]);
+      }) 
     },
-    // 全选
     handleCheckedTreeNodeAll(value) {
       this.$refs.tree.setCheckedNodes(value ? this.menuOptions : []);
     },
@@ -104,9 +106,9 @@ export default {
     },
     async _sever() {
       showLoading("正在保存");
-      await this.modifyJurisdiction({
+      await this.rolesSever({
         id: this.row.id,
-        menuIds: this.$refs.tree.getCheckedKeys(),
+        menus: this.$refs.tree.getCheckedKeys(),
       });
       this.handleClose();
     },

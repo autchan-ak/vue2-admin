@@ -185,8 +185,8 @@ export default {
         sort: { prop: "createdAt", order: "desc" },
       },
       tableList:[
-        {label:"角色名称",prop:"role_name",width:"100"},
-        {label:"角色描述",prop:"role_desc",showOverflowTooltip:true},
+        {label:"角色名称",prop:"roleName",width:"100"},
+        {label:"角色描述",prop:"roleDesc",showOverflowTooltip:true},
         {label:"角色状态",slot:"state"},
         {label:"角色状态",type: "tag",width:"90", prop:"state",tag:{
           'true':{label:"禁用",type:'danger',size:'small'},

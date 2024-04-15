@@ -24,14 +24,15 @@
         position: absolute;
         left: 50%;
         top: 50%;
-        margin-left: -175px;
-        margin-top: -150px;
+        transform: translate(-50%, -50%);
 
         &-title {
             line-height: 50px;
             font-size: 20px;
             color: #ffffff;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             border-bottom: 1px solid #ffffff;
         }
 
@@ -40,9 +41,19 @@
             height: auto;
             padding: 30px;
             box-sizing: border-box;
-            .el-icon-key{
+
+            .el-icon-key {
                 cursor: pointer;
             }
+
+            .login-code {
+                cursor: pointer;
+                height: 38px;
+            }
         }
+    }
+
+    .agreement {
+        font-size: 12px;
     }
 }

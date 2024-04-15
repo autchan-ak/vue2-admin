@@ -120,6 +120,7 @@ export default {
     justify-content: flex-end;
     padding: 0 15px;
     align-items: center;
+    margin: 0;
     &::before {
       position: absolute;
       left: 12px;

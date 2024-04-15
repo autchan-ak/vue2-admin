@@ -1,9 +1,10 @@
 // 优化显示
 body {
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-
+    color: #515a6e;
     #app {
         overflow: hidden;
+        
     }
 
     a {
@@ -22,5 +23,15 @@ body {
         -o-filter: grayscale(100%);
         filter: grayscale(100%);
         filter: gray;
+    }
+
+    // 去掉input数字箭头
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+    }
+
+    input[type='number'] {
+        -moz-appearance: textfield !important;
     }
 }

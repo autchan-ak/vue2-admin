@@ -1,7 +1,8 @@
 <template>
-  <div class="app-wrapper">
+  <div class="app-wrapper" :style="themeColor[themeIndex].container">
     <el-container class="app-box">
       <el-aside
+        v-if="PC"
         :width="showSidebar ? '200px' : '60px'"
         class="main-aside"
         :style="themeColor[themeIndex].aside"
@@ -17,7 +18,7 @@
           <Headers />
         </el-header>
         <el-main class="main-container">
-          <TagsViews :style="themeColor[themeIndex].header"/>
+          <TagsViews :style="themeColor[themeIndex].header" />
           <div
             class="main-container-views"
             :style="themeColor[themeIndex].container"
@@ -27,6 +28,19 @@
             </transition>
           </div>
         </el-main>
+        <div class="phone-drawer">
+        <el-drawer
+          v-if="!PC"
+          size="60%"
+          :visible.sync="showSidebar"
+          direction="ltr"
+          :before-close="handleClose"
+        >
+        <div class="main-aside" :style="themeColor[themeIndex].aside">
+          <sidebar class="sidebar-container" :showSidebar="showSidebar"></sidebar>
+        </div>
+        </el-drawer>
+        </div>
       </el-container>
     </el-container>
     <el-backtop target=".main-container-views" :bottom="50">
@@ -52,47 +66,23 @@ export default {
   },
   data() {
     return {
-      // 全屏幕宽度
-      windowWidth:null,
-    }
+    };
   },
-  watch: {
-    windowWidth(v){
-      if(v>=1200){
-        // 展开
-        this.SET_SHOW_SIDEBAR(true)
-      }else if(v>=750){
-        // 收起
-        this.SET_SHOW_SIDEBAR(false)
-      }else{
-        // 影藏---暂时先收起
-        this.SET_SHOW_SIDEBAR(false)
-      }
-      this.$nextTick(()=>{
-        this.$forceUpdate()
-      })
-    }
-  },
+
   computed: {
-    ...mapState("theme", ["themeColor", "themeIndex","showSidebar"]),
+    ...mapState("theme", ["themeColor", "themeIndex", "showSidebar", "PC"]),
   },
-  mounted(){
-    // 获取屏幕宽度来确定目录的显示状态
-      var that = this;
-      that.windowWidth = document.documentElement.clientWidth
-      window.onresize = () => {
-        return (() => {
-          window.fullWidth = document.documentElement.clientWidth;
-          that.windowWidth = window.fullWidth; //获取屏幕宽度
-        })();
-      }
+  mounted() {
   },
   methods: {
-    ...mapMutations("theme",["SET_SHOW_SIDEBAR"]),
+    ...mapMutations("theme", ["SET_SHOW_SIDEBAR"]),
     // 配色方案 子元素自定义事件
     SET_THEME_INDEX(index) {
       this.themeIndex = index;
       setTheme(index);
+    },
+    handleClose() {
+      this.SET_SHOW_SIDEBAR(!this.showSidebar);
     },
   },
 };

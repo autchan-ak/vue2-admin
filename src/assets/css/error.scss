@@ -1,32 +1,127 @@
 // 404
-.notFound{
+.animation {
+    opacity: 0;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    animation-delay: 1s;
+}
+
+.notFound {
     user-select: none;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100vh;
-    background: #f5f5f5;
-    img{
+    background: #fff;
+
+    &-img {
+        position: relative;
+
+        &-child {
+            position: absolute;
+
+            &.left {
+                @extend .animation;
+                width: 80px;
+                animation-name: cloudLeft;
+            }
+
+            &.mid {
+                @extend .animation;
+                width: 46px;
+                animation-name: cloudMid;
+                animation-delay: .9s;
+            }
+
+            &.right {
+                @extend .animation;
+                width: 62px;
+                animation-name: cloudRight;
+            }
+        }
+    }
+
+    img {
         width: 500px;
     }
-    .text{
+
+    .text {
         margin-top: -30px;
         line-height: 1.2;
         color: #424954;
-        h1{
+
+        h1 {
             font-size: 42px;
             font-weight: bold;
         }
-        h2{
+
+        h2 {
             font-size: 34px;
         }
-        p{
+
+        p {
             font-size: 24px;
         }
     }
-    a{
+
+    a {
         margin-top: 50px;
         display: inline-block;
+    }
+}
+
+@keyframes cloudLeft {
+    0% {
+        top: -60px;
+        left: 170px;
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 97px;
+        left: 60px;
+        opacity: 0;
+    }
+}
+
+@keyframes cloudMid {
+    0% {
+        top: 40px;
+        left: 320px;
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 180px;
+        left: 100px;
+        opacity: 0;
+    }
+}
+
+@keyframes cloudRight {
+    0% {
+        top: 80px;
+        left: 350px;
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 280px;
+        left: 200px;
+        opacity: 0;
     }
 }
