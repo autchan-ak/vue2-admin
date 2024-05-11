@@ -23,6 +23,7 @@ const mutations = {
         removeToken();
         state.userInfo = {};
         state.token = '';
+        state.valid = false;
         state.roles = null;
     },
     USER_ROLES: (state, data) => {
@@ -64,8 +65,9 @@ const actions = {
         })
     },
     // 重置令牌
-    resetToken({ commit, }) {
+    resetToken({ commit,dispatch }) {
         return new Promise((resolve, reject) => {
+            dispatch('tagsView/delAllViews',null,{ root: true })
             Request({
                 url: '/public/admin/login/out',
                 method: 'get',

@@ -119,25 +119,16 @@ export default {
         }
         showLoading("正在修改");
         let res = await this.reclassify({
-          password: this.ruleForm.pass.trim(),
-          usedPass: BASE64Helper.encode(this.ruleForm.usedPass),
+          newPwd: this.ruleForm.pass.trim(),
+          pwd: this.ruleForm.usedPass.trim(),
         });
-        this.show_err = res.password;
-        if (res.type == "success") {
-          this.resetToken();
-          setTimeout(() => {
-            this.$router.replace("/login");
-            location.reload();
-          }, 1000);
-        }
-        this.$nextTick(() => {
-          this.$refs.ruleForm.validateField("checkPass");
-        });
+        this.resetToken();
+        setTimeout(() => {
+          this.$router.replace("/login");
+          location.reload();
+        }, 1000);
       });
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-</style>
