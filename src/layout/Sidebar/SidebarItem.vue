@@ -68,7 +68,7 @@ export default {
             })
            
             // 当只有一个子路由,子路由默认展示
-            if(showingChildren.length === 1){
+            if(showingChildren.length === 1 && !showingChildren[0].children){
                 return true
             }
             // 没有子路由则显示父路由
