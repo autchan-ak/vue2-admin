@@ -239,8 +239,9 @@ el 图标也可传入
 
 ### 最后
 
-- 如果喜欢一定要 star哈!!!（谢谢!!）
-- 如果有意见和问题 请在 lssues提出，我看到后会解答。
-- 作者公众号
+- 🌟 如果喜欢一定要 star哈!!!（谢谢!!）
+- ❓ 如果有意见和问题 请在 lssues提出，我看到后会解答。
+- 📢 承接Vue、React、小程序等项目开发。有需求可滴滴哦
+- 🚀 可添加作者 绿泡泡 `tadpole_01`
 
-<img src="src/assets/image/公众号.png" alt="公众号" width="60%" >
+<img src="src/assets/image/绿泡泡.jpg" alt="公众号" width="60%" >

@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { showLoading } from "@/utils";
 import { mapActions } from "vuex";
 export default {
   data() {
@@ -136,6 +137,7 @@ export default {
       });
     },
     getCodeSvg() {
+      showLoading("正在获取验证码");
       this.getLoginCaptcha().then((res) => {
         this.loginForm.codeSvg = res.codeSvg || "";
         this.loginForm.key = res.key || "";
